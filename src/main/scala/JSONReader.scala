@@ -26,25 +26,8 @@ class JSONReader extends ResourceCollectionReaderBase {
     val res = nextFile
     initCas(aJCas, res)
 
-    // TODO
-    val json = new Scanner(res.getInputStream).useDelimiter("\\A").next
-
-    val jsonAst = json.parseJson
-    val data = jsonAst.convertTo[Map[String, JsValue]]
-
-    var text = ""
-
-    data("title") match {
-      case JsString(s) => text = text + s + " $$ "
-    }
-    data("intro") match {
-      case JsString(s) => text = text + s + " $$ "
-    }
-    data("article") match {
-      case JsString(s) => text = text + s
-    }
-
-
+    val data = JSONParser.parse(res)
+    val text = data("title") + " $$ " + data("intro") + "$$" + data("article")
 
     aJCas.setDocumentText(text)
   }
