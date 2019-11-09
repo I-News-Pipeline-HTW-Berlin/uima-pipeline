@@ -1,0 +1,10 @@
+{
+  "title": "Deutschland weist kaum Fl\u00fcchtlinge an der Grenze ab",
+  "intro": "An der deutsch-\u00f6sterreichischen Grenze sind seit August 2018 nicht mehr als 34 Fl\u00fcchtlinge abgewiesen und nach Griechenland zur\u00fcckgeschickt worden.Normalerweise muss Deutschland in einem \"Dublin-Verfahren\" pr\u00fcfen, welcher Staat f\u00fcr den Asylantrag zust\u00e4ndig ist.Am Streit zwischen CSU und CDU, ob diese Zur\u00fcckweisungen im Schnellverfahren erlaubt sind, w\u00e4re vergangenes Jahr beinahe die Koalition zerbrochen.",
+  "article": "Nur 34 Fl\u00fcchtlinge sind seit August 2018 an der deutsch-\u00f6sterreichischen Grenze abgewiesen und nach Griechenland zur\u00fcckgeschickt worden; das sind deutlich weniger, als von vielen Politikern in der Union erwartet wurde. Am Streit zwischen CSU und CDU, ob diese Zur\u00fcckweisungen im Schnellverfahren erlaubt sind, w\u00e4re vergangenes Jahr beinahe die gro\u00dfe Koalition\u00a0zerbrochen.",
+  "author": null,
+  "published": "3. November 2019, 18:28 Uhr",
+  "summery": "Gerade einmal 34 Asylbewerber wurden bisher wieder nach Griechenland geschickt. Am Streit \u00fcber das Schnellverfahren an der Grenze zu \u00d6sterreich war vor 15 Monaten fast die Koalition zerbrochen.",
+  "url": "https://www.sueddeutsche.de/politik/grenzkontrollen-asylkompromiss-fluechtlinge-1.4665621",
+  "department": "politik"
+}
