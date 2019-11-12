@@ -40,7 +40,8 @@ case class Corpus(reader: CollectionReaderDescription) {
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
-      createEngineDescription(classOf[OpenNlpPosTagger], OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
+      createEngineDescription(classOf[OpenNlpPosTagger],
+        OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
         OpenNlpPosTagger.PARAM_LANGUAGE, "de"),
       /*createEngineDescription(classOf[OpenNlpLemmatizer], OpenNlpLemmatizer.PARAM_MODEL_LOCATION, MODEL_GERMAN,
         OpenNlpLemmatizer.PARAM_LANGUAGE, "de")*/

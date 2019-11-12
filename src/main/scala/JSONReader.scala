@@ -1,17 +1,8 @@
-import java.io.{BufferedInputStream, File, InputStream}
-import java.util.Scanner
-
-import com.ibm.icu.text.CharsetDetector
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
-import de.tudarmstadt.ukp.dkpro.core.api.resources.CompressionUtils
-import org.apache.commons.io.IOUtils
 import org.apache.uima.cas.CAS
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import spray.json._
-import DefaultJsonProtocol._
 
-import scala.io.Source
 
 class JSONReader extends ResourceCollectionReaderBase {
 
