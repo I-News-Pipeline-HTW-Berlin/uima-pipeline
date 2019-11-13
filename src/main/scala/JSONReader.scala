@@ -27,7 +27,7 @@ class JSONReader extends ResourceCollectionReaderBase {
     initCas(aJCas, res)
 
     val data = JSONParser.parse(res)
-    val text = data("title") + " $$ " + data("intro") + "$$" + data("article")
+    val text = data("title") + " $$ " + data("intro") + " $$ " + data("article")
 
     aJCas.setDocumentText(text)
   }

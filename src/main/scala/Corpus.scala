@@ -2,9 +2,7 @@ import java.net.URL
 
 import org.apache.uima.collection.CollectionReaderDescription
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
-import de.tudarmstadt.ukp.dkpro.core.clearnlp.{ClearNlpLemmatizer, ClearNlpPosTagger, ClearNlpSegmenter}
-import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader
-import de.tudarmstadt.ukp.dkpro.core.languagetool.LanguageToolLemmatizer
+import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpLemmatizer, OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
@@ -45,7 +43,10 @@ case class Corpus(reader: CollectionReaderDescription) {
       /*createEngineDescription(classOf[OpenNlpLemmatizer], OpenNlpLemmatizer.PARAM_MODEL_LOCATION, MODEL_GERMAN,
         OpenNlpLemmatizer.PARAM_LANGUAGE, "de")*/
       //TODO find better lemmatizer with german model available
-      createEngineDescription(classOf[LanguageToolLemmatizer])
+      //createEngineDescription(classOf[LanguageToolLemmatizer])
+      createEngineDescription(classOf[IxaLemmatizer],
+        IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
+        IxaLemmatizer.PARAM_LANGUAGE, "de")
     ).iterator()
 }
 
