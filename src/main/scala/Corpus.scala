@@ -2,6 +2,7 @@ import java.net.URL
 
 import org.apache.uima.collection.CollectionReaderDescription
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
+import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpLemmatizer, OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
@@ -29,6 +30,17 @@ case class Corpus(reader: CollectionReaderDescription) {
         OpenNlpSegmenter.PARAM_LANGUAGE, "de")
     ).iterator()
 
+  def removeStopWords(): JCasIterator =
+    iteratePipeline(
+      reader,
+      createEngineDescription(classOf[OpenNlpSegmenter],
+        OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
+        OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
+        OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+      createEngineDescription(classOf[StopWordRemover],
+        StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE)
+    ).iterator()
+
   def lemmatize(): JCasIterator =
     iteratePipeline(
       reader,
@@ -49,7 +61,18 @@ case class Corpus(reader: CollectionReaderDescription) {
         IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
         IxaLemmatizer.PARAM_LANGUAGE, "de")
     ).iterator()
+
+  def estimateReadingTime(): JCasIterator = iteratePipeline(
+    reader,
+    createEngineDescription(classOf[OpenNlpSegmenter],
+      OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
+      OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
+      OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[ReadingTimeEstimator],
+      ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0")
+  ).iterator()
 }
+
 
 object Corpus {
   def fromDir(directory: String, pattern: String = "[+]**/*.json", lang: String = "de"): Corpus = {

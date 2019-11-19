@@ -21,5 +21,14 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.6.4",
 
   /* JSON parsing */
-  "io.spray" %% "spray-json" % "1.3.5"
+  "io.spray" %% "spray-json" % "1.3.5",
+
+  "org.apache.uima" % "uimaj-tools" % "2.8.1",
+
+  "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
+
 )
+
+
+
+
