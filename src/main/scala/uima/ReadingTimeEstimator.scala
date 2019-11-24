@@ -1,11 +1,12 @@
-import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
+package uima
+
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Token
-import org.apache.uima.cas.{Feature, FeatureStructure, Type}
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
+import org.apache.uima.jcas.tcas.Annotation
+
 
 
 class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
@@ -14,7 +15,7 @@ class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
   val wordsPerMinute = "200.0"
 
   def estimateReadingTime(wordCount: Int, wordsPerMinute: Double = 200.0) : Int = {
-    /*val corpus = Corpus.fromDir("testResourcesJSON")
+    /*val corpus = uima.Corpus.fromDir("testResourcesJSON")
     val jcasIterator = corpus.tokenize()
     jcasIterator.forEachRemaining(jcas => {
       print("\n\n")
@@ -38,10 +39,11 @@ class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
     val numOfWords = JCasUtil.select(aJCas, classOf[Token]).size()
     val readingTime = estimateReadingTime(numOfWords, ReadingTimeEstimator.WORDS_PER_MINUTE.toDouble)
     //aJCas.createView("MetaView").setSofaDataString(readingTime.toString, String)
-    val fakeToken = new Token(aJCas, 0, numOfWords-1)
+
+    val an = new Annotation(aJCas, 0, numOfWords-1)
     //print(readingTime)
-    fakeToken.setText(String.valueOf(readingTime))
-    fakeToken.addToIndexes()
+    an.setStringValue(aJCas.getTypeSystem.getType("Token").getFeatures.get(0), readingTime.toString)
+    an.addToIndexes()
   }
 }
 
