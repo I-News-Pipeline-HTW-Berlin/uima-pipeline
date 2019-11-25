@@ -2,27 +2,40 @@ package uima
 
 import db.DbConnector
 import db.Helpers._
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.{Lemma, Token}
 import org.apache.uima.fit.util.JCasUtil
 
 object App {
 
   def main(args: Array[String]) {
     //val corpus = Corpus.fromDir("testResourcesJSON")
-    val corpus = Corpus.fromDb()
-    val jcasIterator = corpus.lemmatize()
+    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "scraped_articles")
+    val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
-    //val jcasIterator = corpus.estimateReadingTime()
-    jcasIterator.forEachRemaining(jcas => {
+    val jcasIteratorRT = corpus.estimateReadingTime()
+    jcasIteratorLemmas.forEachRemaining(jcas => {
       print("\n\n")
       val lemmas = JCasUtil.select(jcas, classOf[Lemma])
       //val tokens = JCasUtil.select(jcas, classOf[Token])
-      //val readingTimes = JCasUtil.select(jcas, classOf[Token])
+      //val readingTimes = JCasUtil.select(jcas, classOf[MetaDataStringField])
       lemmas.iterator.forEachRemaining(r => print(r.getValue + "\n"))
       //print(lemmas)
       //print(tokens)
       //tokens.iterator.forEachRemaining(t => print(t.getText + "\n"))
-      //readingTimes.iterator().forEachRemaining(rt => print(rt.getForm.getCoveredText))
+      //readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
+    })
+    jcasIteratorRT.forEachRemaining(jcas => {
+      print("\n\n")
+      //val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      //val tokens = JCasUtil.select(jcas, classOf[Token])
+      val readingTimes = JCasUtil.select(jcas, classOf[MetaDataStringField])
+      //lemmas.iterator.forEachRemaining(r => print(r.getValue + "\n"))
+      //print(lemmas)
+      //print(tokens)
+      //tokens.iterator.forEachRemaining(t => print(t.getText + "\n"))
+      readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
     })
 
 

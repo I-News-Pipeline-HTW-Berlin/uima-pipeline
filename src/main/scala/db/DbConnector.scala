@@ -1,18 +1,9 @@
 package db
 
-import com.mongodb.{ConnectionString, MongoCredential}
 import org.mongodb.scala.bson.collection.mutable.Document
-import org.mongodb.scala.{Completed, FindObservable, MongoClient, MongoClientSettings, MongoCollection, MongoDatabase, Observable, Observer, ReadPreference, ServerAddress}
-import org.mongodb.scala.connection.ClusterSettings
-import com.mongodb.MongoCredential._
-import java.util.logging.{Level, Logger}
-
-import scala.jdk.CollectionConverters
-import scala.collection.JavaConverters._
-import java.util.concurrent.CountDownLatch
+import org.mongodb.scala.{Completed, MongoClient, MongoCollection, Observer}
 
 object DbConnector {
-
 
   //TODO Exception Handling??
   def createClient(userName: String = "s0558059",
@@ -30,11 +21,23 @@ object DbConnector {
     mongoClient.getDatabase(dbName).getCollection(collectionName)
   }
 
-  /*def connectToDB: MongoCollection[Document] = {
+  def writeSingleDocumentToCollection(collection: MongoCollection[Document] = getCollectionFromDb(),
+                                      docJsonString: String) = {
+    val doc = Document(docJsonString)
+    collection.insertOne(doc).subscribe(new Observer[Completed] {
+      override def onNext(result: Completed): Unit = println("inserted")
+      override def onError(e: Throwable): Unit = print(e.getStackTrace)
+      override def onComplete(): Unit = println("completed")
+    })
+  }
 
-    val mongoClient: MongoClient = MongoClient("mongodb://s0558059:f0r313g@hadoop05.f4.htw-berlin.de:27020/s0558059")
-    val db: MongoDatabase = mongoClient.getDatabase("s0558059")
-    db.getCollection("scraped_articles")
-
-  }*/
+  def writeMultipleDocumentsToCollection(collection: MongoCollection[Document] = getCollectionFromDb(),
+                                         jsonStringList: List[String]) = {
+    val docs = jsonStringList.map(j => Document(j))
+    collection.insertMany(docs).subscribe(new Observer[Completed] {
+      override def onNext(result: Completed): Unit = println("inserted")
+      override def onError(e: Throwable): Unit = println(e.getStackTrace)
+      override def onComplete(): Unit = println("completed")
+    })
+  }
 }

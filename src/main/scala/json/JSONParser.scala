@@ -13,11 +13,9 @@ object JSONParser {
   }
 
   def parse(json: String) : Map[String, String] = {
-    //val json = Source.fromInputStream(res.getInputStream).mkString
 
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
-    //val data = jsonAst.convertTo[Map[String, JsValue]]
 
     data.map(key => (key._1, key._2 match {
       /* auto-generated from intellij, vielleicht später hilfreich */

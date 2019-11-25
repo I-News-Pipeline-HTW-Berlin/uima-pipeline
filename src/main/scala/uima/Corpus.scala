@@ -1,7 +1,6 @@
 package uima
 
 import db.{DbConnector, JSONReaderDB}
-import db.Helpers._
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
@@ -11,6 +10,7 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
+import org.mongodb.scala.ServerAddress
 
 
 case class Corpus(reader: CollectionReaderDescription) {
@@ -90,10 +90,16 @@ object Corpus {
     ))
   }
 
-  def fromDb(): Corpus = {
+  def fromDb(userName: String, pw: String, serverAddress: String, port: String, db: String, collectionName: String): Corpus = {
 
     Corpus(createReaderDescription(
-      classOf[JSONReaderDB]
+      classOf[JSONReaderDB],
+      JSONReaderDB.USER_NAME, userName,
+      JSONReaderDB.PW, pw,
+      JSONReaderDB.SERVER_ADDRESS, serverAddress,
+      JSONReaderDB.PORT, port,
+      JSONReaderDB.DB, db,
+      JSONReaderDB.COLLECTION_NAME, collectionName
     ))
   }
 }
