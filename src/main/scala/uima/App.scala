@@ -38,6 +38,8 @@ object App {
       readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
     })
 
+    val testPipeIt = corpus.testPipeline()
+
 
     //val collection = DbConnector.getCollectionFromDb()
     //collection.find().first().printHeadResult()

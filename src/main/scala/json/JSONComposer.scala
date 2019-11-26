@@ -1,11 +1,11 @@
 package json
 
 import spray.json._
-import DefaultJsonProtocol._
 
 object JSONComposer {
 
-  def compose(): String = {
-    ???
+  def compose(lemmas: List[String], readingTime: Int): String = {
+    ExtendedArticle(lemmas, readingTime).toJson(JsonWriter[ExtendedArticle]).compactPrint
   }
+
 }

@@ -70,6 +70,26 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0")
   ).iterator()
+
+  def testPipeline(): JCasIterator = iteratePipeline(
+    reader,
+    createEngineDescription(classOf[OpenNlpSegmenter],
+      OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
+      OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
+      OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[ReadingTimeEstimator],
+      ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
+    createEngineDescription(classOf[OpenNlpPosTagger],
+      OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
+      OpenNlpPosTagger.PARAM_LANGUAGE, "de"),
+    /*createEngineDescription(classOf[OpenNlpLemmatizer], OpenNlpLemmatizer.PARAM_MODEL_LOCATION, MODEL_GERMAN,
+      OpenNlpLemmatizer.PARAM_LANGUAGE, "de")*/
+    //TODO find better lemmatizer with german model available
+    //createEngineDescription(classOf[LanguageToolLemmatizer])
+    createEngineDescription(classOf[IxaLemmatizer],
+      IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
+      IxaLemmatizer.PARAM_LANGUAGE, "de")
+  ).iterator()
 }
 
 
