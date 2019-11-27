@@ -79,6 +79,8 @@ case class Corpus(reader: CollectionReaderDescription) {
       OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
+    createEngineDescription(classOf[StopWordRemover],
+      StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
       OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
       OpenNlpPosTagger.PARAM_LANGUAGE, "de"),
