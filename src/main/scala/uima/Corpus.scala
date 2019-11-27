@@ -88,7 +88,8 @@ case class Corpus(reader: CollectionReaderDescription) {
     //createEngineDescription(classOf[LanguageToolLemmatizer])
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
-      IxaLemmatizer.PARAM_LANGUAGE, "de")
+      IxaLemmatizer.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[JsonCollectionWriter])
   ).iterator()
 }
 

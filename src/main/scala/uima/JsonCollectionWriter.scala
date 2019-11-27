@@ -14,7 +14,6 @@ class JsonCollectionWriter extends JCasConsumer_ImplBase {
 
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
     val readingTime = JCasUtil.select(aJCas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue.toInt
-
     val jsonString = JSONComposer.compose(lemmas, readingTime)
     println(jsonString)
   }

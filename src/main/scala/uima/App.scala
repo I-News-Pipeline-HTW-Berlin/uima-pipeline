@@ -15,7 +15,7 @@ object App {
     val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
     val jcasIteratorRT = corpus.estimateReadingTime()
-    jcasIteratorLemmas.forEachRemaining(jcas => {
+    /*jcasIteratorLemmas.forEachRemaining(jcas => {
       print("\n\n")
       val lemmas = JCasUtil.select(jcas, classOf[Lemma])
       //val tokens = JCasUtil.select(jcas, classOf[Token])
@@ -36,9 +36,9 @@ object App {
       //print(tokens)
       //tokens.iterator.forEachRemaining(t => print(t.getText + "\n"))
       readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
-    })
+    })*/
 
-    val testPipeIt = corpus.testPipeline()
+    val testPipeIt = corpus.testPipeline().next()
 
 
     //val collection = DbConnector.getCollectionFromDb()
