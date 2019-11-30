@@ -1,11 +1,13 @@
 package db
 
 import db.Helpers._
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
 import json.JSONParser
 import org.apache.uima.cas.CAS
 import org.apache.uima.fit.component.CasCollectionReader_ImplBase
 import org.apache.uima.fit.descriptor.ConfigurationParameter
+import org.apache.uima.resource.metadata.ResourceMetaData
 import org.apache.uima.util.Progress
 import org.apache.uima.util.ProgressImpl
 import org.mongodb.scala.MongoClient
@@ -46,9 +48,14 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   //TODO Exception Handling
   override def getNext(aJCas: CAS): Unit = {
       val json = it.next().toJson()
-      val data = JSONParser.parse(json)
-      val textToAnalyze = data("title") + " $$ " + data("description")+ " $$ " + data("intro") + " $$ " + data("text")
+      val data = JSONParser.parseStrings(json)
+      // Trenner erstmal raus, werden aber eventuell wieder benötigt
+      //val textToAnalyze = data("title") + " $$ " + data("description")+ " $$ " + data("intro") + " $$ " + data("text")
+      val textToAnalyze = data("title") + " "+ data("intro") + " " + data("text")
       aJCas.setDocumentText(textToAnalyze)
+      aJCas.createView("META_VIEW")
+      aJCas.getView("META_VIEW").setDocumentText(json)
+      //this.getMetaData.setDescription(json)
       mCurrentIndex+=1
   }
 
