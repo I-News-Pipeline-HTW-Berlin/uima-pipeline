@@ -1,5 +1,7 @@
 package uima
 
+import java.util.Date
+
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasConsumer_ImplBase
 import org.apache.uima.fit.util.JCasUtil
@@ -19,11 +21,11 @@ class JsonCollectionWriter extends JCasConsumer_ImplBase {
     val jsonString = JSONComposer.compose(
       data("_id").asInstanceOf[String],
       data("authors").asInstanceOf[List[String]],
-      data("crawl_time").asInstanceOf[String],
+      data("crawl_time").asInstanceOf[BigDecimal],
       data("text").asInstanceOf[String],
       data("news_site").asInstanceOf[String],
       data("links").asInstanceOf[List[String]],
-      data("published_time").asInstanceOf[String],
+      data("published_time").asInstanceOf[BigDecimal],
       data("keywords").asInstanceOf[List[String]],
       data("long_url").asInstanceOf[String],
       data("intro").asInstanceOf[String],

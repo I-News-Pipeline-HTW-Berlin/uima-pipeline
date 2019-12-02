@@ -113,7 +113,7 @@ object Corpus {
     ))
   }
 
-  def fromDb(userName: String, pw: String, serverAddress: String, port: String, db: String, collectionName: String): Corpus = {
+  def fromDb(userName: String, pw: String, serverAddress: String, port: String, db: String, collectionName: String, fileLocation: String): Corpus = {
 
     Corpus(createReaderDescription(
       classOf[JSONReaderDB],
@@ -122,7 +122,8 @@ object Corpus {
       JSONReaderDB.SERVER_ADDRESS, serverAddress,
       JSONReaderDB.PORT, port,
       JSONReaderDB.DB, db,
-      JSONReaderDB.COLLECTION_NAME, collectionName
+      JSONReaderDB.COLLECTION_NAME, collectionName,
+      JSONReaderDB.FILE_LOCATION, fileLocation
     ))
   }
 }

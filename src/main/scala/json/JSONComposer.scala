@@ -1,5 +1,7 @@
 package json
 
+import java.util.Date
+
 import spray.json._
 import json.ExtendedArticle
 
@@ -7,11 +9,11 @@ object JSONComposer {
 
   def compose(id: String,
               authors: List[String],
-              crawlTime: String,
+              crawlTime: BigDecimal,
               text: String,
               newsSite: String,
               links: List[String],
-              publishedTime: String,
+              publishedTime: BigDecimal,
               keywords: List[String],
               longUrl: String,
               intro: String,

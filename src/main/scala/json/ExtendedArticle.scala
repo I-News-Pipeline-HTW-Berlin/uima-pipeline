@@ -1,16 +1,18 @@
 package json
 
+import java.util.Date
+
 import spray.json.{DefaultJsonProtocol, JsArray, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
 
 // nur noch nicht verarbeitete artikel analysieren (crawl time)
 
 case class ExtendedArticle(val id: String,
                            val authors: List[String],
-                           val crawlTime: String,
+                           val crawlTime: BigDecimal,
                            val text: String,
                            val newsSite: String,
                            val links: List[String],
-                           val publishedTime: String,
+                           val publishedTime: BigDecimal,
                            val keywords: List[String],
                            val longUrl: String,
                            val intro: String,
@@ -28,17 +30,17 @@ case class ExtendedArticle(val id: String,
 }
 
 object ExtendedArticleJsonProtocol extends DefaultJsonProtocol{
-  implicit val articleFormat = jsonFormat15(ExtendedArticle)
 
+  //TODO create Date objects correctly
   implicit object ExtendedArticleJsonFormat extends RootJsonFormat[ExtendedArticle] {
     def write(ea: ExtendedArticle) = JsObject(
       "_id" -> JsString(ea.id),
       "authors" -> JsArray(ea.authorsAsJsStrings),
-      "crawl_time" -> JsString(ea.crawlTime),
+      "crawl_time" -> JsString(ea.crawlTime.toString),
       "text" -> JsString(ea.text),
       "newsSite" -> JsString(ea.newsSite),
       "links" -> JsArray(ea.linksAsJsStrings),
-      "published_time" -> JsString(ea.publishedTime),
+      "published_time" -> JsString(ea.publishedTime.toString),
       "keywords" -> JsArray(ea.keywordsAsJsStrings),
       "long_url" -> JsString(ea.longUrl),
       "intro" -> JsString(ea.intro),
