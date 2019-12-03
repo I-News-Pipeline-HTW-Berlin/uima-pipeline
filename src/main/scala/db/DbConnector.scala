@@ -40,10 +40,10 @@ object DbConnector {
                                          jsonStringList: IndexedSeq[String]): Unit = {
     println("Anzahl Dokumente " + collection.countDocuments().headResult())
     //jsonStringList.map(j => collection.insertOne(Document(j)))
-    jsonStringList.map(j => writeSingleDocumentToCollection(collection, j))
+    //jsonStringList.map(j => writeSingleDocumentToCollection(collection, j))
     //documentList.map(doc => collection.insertOne(doc))
 
-    //val docs = jsonStringList.map(json => Document(json))
+    val docs = jsonStringList.map(json => Document(BsonDocument(json)))
     print("huhu !")
     /*val insertObservable = collection.insertMany(docs)
     insertObservable.subscribe(new Observer[Completed] {
@@ -54,13 +54,13 @@ object DbConnector {
 
     //Await.ready(collection.insertMany(jsonStringList.map(json => Document(json))).toFuture(), 20.seconds)
 
-    /*val insertObservable = collection.insertMany(docs)
+    val insertObservable = collection.insertMany(docs)
 
     val insertAndCount = for {
       insertResult <- insertObservable
       countResult <- collection.estimatedDocumentCount()
     } yield countResult
 
-    println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult()}")*/
+    println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult()}")
   }
 }

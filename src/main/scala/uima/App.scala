@@ -54,9 +54,9 @@ object App {
     //Exception abfangen, falls Liste empty
     val mongoClient = DbConnector.createClient("s0558478", "1unch30n", "hadoop05.f4.htw-berlin.de", "27020", "s0558478")
     val collection = DbConnector.getCollectionFromDb("s0558478", "processed_articles", mongoClient)
-    jsonList.map(doc => collection.insertOne(Document(doc)))
+    //jsonList.map(doc => collection.insertOne(Document(doc)))
 
-    //DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
+    DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
 
     /*
       object JsonWriter {
