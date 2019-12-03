@@ -11,7 +11,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescripti
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
 import org.mongodb.scala.ServerAddress
-
+import uima.JsonWriter
 
 case class Corpus(reader: CollectionReaderDescription) {
 
@@ -91,10 +91,24 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
-    createEngineDescription(classOf[JsonCollectionWriter])
+    createEngineDescription(classOf[JsonWriter],
+      JsonWriter.USER_NAME, "s0558478",
+      JsonWriter.PW, "1unch30n",
+      JsonWriter.SERVER_ADDRESS, "hadoop05.f4.htw-berlin.de",
+      JsonWriter.PORT, "27020",
+      JsonWriter.DB, "s0558478",
+      JsonWriter.COLLECTION_NAME, "processed_articles"
+    )
   ).iterator()
 }
-
+/*
+USER_NAME = "s0558478"
+    final val PW = "1unch30n"
+    final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
+    final val PORT = "27020"
+    final val DB = "s0558478"
+    final val COLLECTION_NAME = "processed_articles"
+ */
 
 object Corpus {
   def fromDir(directory: String, pattern: String = "[+]**/*.json", lang: String = "de"): Corpus = {
