@@ -3,7 +3,7 @@ package db
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.{Completed, MongoClient, MongoCollection, Observer}
-import db.Helpers
+import db.Helpers._
 
 object DbConnector {
 
@@ -33,6 +33,7 @@ object DbConnector {
     })
   }
 
+  //TODO: Exception catchen wegen Duplikaten
   def writeMultipleDocumentsToCollection(collection: MongoCollection[Document] = getCollectionFromDb(),
                                          jsonStringList: List[String]) = {
     val docs = jsonStringList.map(j => Document(BsonDocument(j)))
@@ -50,6 +51,6 @@ object DbConnector {
       countResult <- collection.estimatedDocumentCount()
     } yield countResult
 
-    //println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult}")
+    println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult}")
   }
 }
