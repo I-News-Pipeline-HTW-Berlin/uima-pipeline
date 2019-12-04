@@ -1,3 +1,7 @@
+package uima
+
+import json.JSONParser
+
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
 import org.apache.uima.cas.CAS
@@ -17,7 +21,8 @@ class JSONReader extends ResourceCollectionReaderBase {
     val res = nextFile
     initCas(aJCas, res)
 
-    val data = JSONParser.parse(res)
+    val json = JSONParser.getJsonStringFromResource(res)
+    val data = JSONParser.parseStrings(json)
     val text = data("title") + " $$ " + data("intro") + " $$ " + data("article")
 
     aJCas.setDocumentText(text)
