@@ -40,8 +40,11 @@ object JSONParser {
     val data = jsonAst.convertTo[Map[String, JsValue]]
     data.map(key => (key._1, key._2 match {
       /* auto-generated from intellij, vielleicht später hilfreich */
-      case JsObject(fields) => fields("$date") match {
+      case JsObject(fields) if fields.contains("$date") => fields("$date") match {
         case JsNumber(value) => value
+      }
+      case JsObject(fields) if fields.contains("$oid") => fields("$oid") match {
+        case JsString(value) => value
       }
       case JsArray(elements) => elements.toList.map(el => el.toString())
       //case JsNumber(value) => value

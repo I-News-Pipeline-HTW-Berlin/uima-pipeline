@@ -48,13 +48,14 @@ class JsonWriter extends JCasConsumer_ImplBase {
       data("published_time").asInstanceOf[BigDecimal],
       data("keywords").asInstanceOf[List[String]],
       data("long_url").asInstanceOf[String],
+      data("short_url").asInstanceOf[String],
       data("intro").asInstanceOf[String],
       data("title").asInstanceOf[String],
       data("image_links").asInstanceOf[List[String]],
       data("description").asInstanceOf[String],
       lemmas,
       readingTime)
-   // println(jsonString)
+      println(jsonString)
       val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
       metaDataStringField.setKey("json")
       metaDataStringField.setValue(jsonString)

@@ -43,6 +43,7 @@ object App {
 
     val testPipeIt = corpus.testPipeline()
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
+    //TODO make it nice
     var jsonList : IndexedSeq[String] = IndexedSeq.empty
     testPipeIt.forEachRemaining(jcas => {
       val json =JCasUtil.select(jcas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue
@@ -58,15 +59,6 @@ object App {
 
     DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
 
-    /*
-      object JsonWriter {
-    final val USER_NAME = "s0558478"
-    final val PW = "1unch30n"
-    final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
-    final val PORT = "27020"
-    final val DB = "s0558478"
-    final val COLLECTION_NAME = "processed_articles"
-     */
     //val collection = DbConnector.getCollectionFromDb()
     //collection.find().first().printHeadResult()
     /*val results = collection.find().toFuture()
