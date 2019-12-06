@@ -51,13 +51,19 @@ object App {
       //jsonList = json::jsonList
       jsonList = json+:jsonList
     })
-    println("Länge der Liste: "+ jsonList.size)
+    //println("Länge der Liste: "+ jsonList.size)
     //Exception abfangen, falls Liste empty
-    val mongoClient = DbConnector.createClient("s0558478", "1unch30n", "hadoop05.f4.htw-berlin.de", "27020", "s0558478")
-    val collection = DbConnector.getCollectionFromDb("s0558478", "processed_articles", mongoClient)
-    //jsonList.map(doc => collection.insertOne(Document(doc)))
+    if(!jsonList.isEmpty){
+      val mongoClient = DbConnector.createClient("s0558478", "1unch30n", "hadoop05.f4.htw-berlin.de", "27020", "s0558478")
+      val collection = DbConnector.getCollectionFromDb("s0558478", "processed_articles", mongoClient)
+      //jsonList.map(doc => collection.insertOne(Document(doc)))
 
-    DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
+      DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
+    } else {
+      //TODO things like that should be written to log file
+      println("Currently no documents to analyze. ")
+    }
+
 
     //val collection = DbConnector.getCollectionFromDb()
     //collection.find().first().printHeadResult()

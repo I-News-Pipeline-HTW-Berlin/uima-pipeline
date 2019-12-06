@@ -1,19 +1,17 @@
 package db
 
+import com.mongodb.DuplicateKeyException
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.{Completed, MongoClient, MongoCollection, Observer}
 import db.Helpers._
-import scala.concurrent.duration._
-
-import scala.concurrent.Await
 
 object DbConnector {
 
   //TODO Exception Handling??
-  def createClient(userName: String ,
-                   pw: String ,
-                   serverAddress: String ,
+  def createClient(userName: String,
+                   pw: String,
+                   serverAddress: String,
                    port: String,
                    db: String): MongoClient = {
     MongoClient("mongodb://"+userName+":"+pw+"@"+serverAddress+":"+port+"/"+db)
@@ -38,13 +36,13 @@ object DbConnector {
 
   def writeMultipleDocumentsToCollection(collection: MongoCollection[Document],
                                          jsonStringList: IndexedSeq[String]): Unit = {
-    println("Anzahl Dokumente " + collection.countDocuments().headResult())
+    //println("Anzahl Dokumente " + collection.countDocuments().headResult())
     //jsonStringList.map(j => collection.insertOne(Document(j)))
     //jsonStringList.map(j => writeSingleDocumentToCollection(collection, j))
     //documentList.map(doc => collection.insertOne(doc))
 
     val docs = jsonStringList.map(json => Document(BsonDocument(json)))
-    print("huhu !")
+
     /*val insertObservable = collection.insertMany(docs)
     insertObservable.subscribe(new Observer[Completed] {
       override def onNext(result: Completed): Unit = println("inserted")
@@ -53,14 +51,21 @@ object DbConnector {
     })*/
 
     //Await.ready(collection.insertMany(jsonStringList.map(json => Document(json))).toFuture(), 20.seconds)
+    try {
+      //TODO wie kann das schöner werden?
+      val insertObservable = collection.insertMany(docs)
 
-    val insertObservable = collection.insertMany(docs)
+      val insertAndCount = for {
+        insertResult <- insertObservable
+        countResult <- collection.estimatedDocumentCount()
+      } yield countResult
 
-    val insertAndCount = for {
-      insertResult <- insertObservable
-      countResult <- collection.estimatedDocumentCount()
-    } yield countResult
+      println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult()}")
+    } catch {
+          //TODO write something into log file
+        case dke: DuplicateKeyException => println("One or more ids already exist. "+dke.getMessage)
+        case e: Exception => e.printStackTrace()
+    }
 
-    println(s"total # of documents after inserting 100 small ones (should be 101):  ${insertAndCount.headResult()}")
   }
 }

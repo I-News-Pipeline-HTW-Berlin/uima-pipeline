@@ -1,6 +1,6 @@
 package uima
 
-import db.{DbConnector, JSONReaderDB}
+import db.{JSONReaderDB}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
@@ -10,8 +10,6 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
-import org.mongodb.scala.ServerAddress
-import uima.JsonWriter
 
 case class Corpus(reader: CollectionReaderDescription) {
 
@@ -101,14 +99,6 @@ case class Corpus(reader: CollectionReaderDescription) {
     )
   ).iterator()
 }
-/*
-USER_NAME = "s0558478"
-    final val PW = "1unch30n"
-    final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
-    final val PORT = "27020"
-    final val DB = "s0558478"
-    final val COLLECTION_NAME = "processed_articles"
- */
 
 object Corpus {
   def fromDir(directory: String, pattern: String = "[+]**/*.json", lang: String = "de"): Corpus = {

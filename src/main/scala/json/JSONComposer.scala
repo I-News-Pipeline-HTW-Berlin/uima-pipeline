@@ -1,9 +1,6 @@
 package json
 
-import java.util.Date
-
 import spray.json._
-import json.ExtendedArticle
 
 object JSONComposer {
 

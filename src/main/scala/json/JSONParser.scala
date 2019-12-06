@@ -1,8 +1,6 @@
 package json
 
 import java.text.SimpleDateFormat
-import java.time.{Instant, ZoneId, ZoneOffset}
-import java.util.Date
 
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase.Resource
 import spray.json._
@@ -46,7 +44,7 @@ object JSONParser {
       case JsObject(fields) if fields.contains("$oid") => fields("$oid") match {
         case JsString(value) => value
       }
-      case JsArray(elements) => elements.toList.map(el => el.toString())
+      case JsArray(elements) => elements.toList.map(jsVal => jsVal.asInstanceOf[JsString].value)
       //case JsNumber(value) => value
       //case boolean: JsBoolean =>
       case JsNull => null

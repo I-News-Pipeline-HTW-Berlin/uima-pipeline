@@ -5,11 +5,9 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasConsumer_ImplBase
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
-import spray.json._
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import json.{JSONComposer, JSONParser}
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import db.DbConnector
 
 class JsonWriter extends JCasConsumer_ImplBase {
 
@@ -55,15 +53,12 @@ class JsonWriter extends JCasConsumer_ImplBase {
       data("description").asInstanceOf[String],
       lemmas,
       readingTime)
-      println(jsonString)
+      //println(jsonString)
       val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
       metaDataStringField.setKey("json")
       metaDataStringField.setValue(jsonString)
       metaDataStringField.addToIndexes()
-    //DbConnector.writeSingleDocumentToCollection(collection, jsonString)
-
   }
-
 }
 
   object JsonWriter {

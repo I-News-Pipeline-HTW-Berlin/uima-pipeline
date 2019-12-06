@@ -1,10 +1,6 @@
 package json
 
-import java.util.Date
-
 import spray.json.{DefaultJsonProtocol, JsArray, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
-
-// nur noch nicht verarbeitete artikel analysieren (crawl time)
 
 case class ExtendedArticle(val id: String,
                            val authors: List[String],
@@ -34,7 +30,6 @@ case class ExtendedArticle(val id: String,
 
 object ExtendedArticleJsonProtocol extends DefaultJsonProtocol{
 
-  //TODO create Date objects correctly
   implicit object ExtendedArticleJsonFormat extends RootJsonFormat[ExtendedArticle] {
     def write(ea: ExtendedArticle) = JsObject(
       "_id" -> JsObject(Map("$oid" -> JsString(ea.id))),
