@@ -13,10 +13,10 @@ import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
 
 case class Corpus(reader: CollectionReaderDescription) {
 
-  val STOPWORD_FILE = "src/main/resources/stopwords-de.txt"
-  val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
-  val SEGMENTER_DE_TOKEN_MODEL = "src/main/resources/de-token.bin"
-  val SEGMENTER_DE_SENTENCE_MODEL = "src/main/resources/de-sent.bin"
+  val STOPWORD_FILE = "/home/uima/resources/stopwords-de.txt"
+  val POS_TAGGER_DE_MODEL = "/home/uima/resources/de-pos-maxent.bin"
+  val SEGMENTER_DE_TOKEN_MODEL = "/home/uima/resources/de-token.bin"
+  val SEGMENTER_DE_SENTENCE_MODEL = "/home/uima/resources/de-sent.bin"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
