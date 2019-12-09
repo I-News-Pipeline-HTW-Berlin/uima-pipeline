@@ -44,7 +44,7 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val collectionName = "scraped_articles"
 
   @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
-  val fileLocation = "src/main/resources/last_crawl_time.txt"
+  val fileLocation = "testResources/last_crawl_time.txt"
 
   //val DATE_FORMAT = "EEE, MMM dd, yyyy h:mm a"
   //TODO paar Sachen in Funktionen verpacken
@@ -111,5 +111,5 @@ object JSONReaderDB {
   final val PORT = "27020"
   final val DB = "s0558059"
   final val COLLECTION_NAME = "scraped_articles"
-  final val FILE_LOCATION = "src/main/resources/last_crawl_time.txt"
+  final val FILE_LOCATION = "testResources/last_crawl_time.txt"
 }

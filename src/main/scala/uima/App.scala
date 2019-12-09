@@ -13,7 +13,7 @@ object App {
   def main(args: Array[String]) {
     //val corpus = Corpus.fromDir("testResourcesJSON")
     val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles", "src/main/resources/last_crawl_time.txt")
+      "27020", "s0558059", "scraped_articles", "testResources/last_crawl_time.txt")
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
     //val jcasIteratorRT = corpus.estimateReadingTime()
