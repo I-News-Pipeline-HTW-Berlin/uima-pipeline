@@ -12,8 +12,8 @@ object App {
 
   def main(args: Array[String]) {
     //val corpus = Corpus.fromDir("testResourcesJSON")
-    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles", "/home/uima/resources/last_crawl_time.txt")
+    val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
+      "27020", "inews", "scraped_articles", "last_crawl_time.txt")
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
     //val jcasIteratorRT = corpus.estimateReadingTime()
@@ -54,8 +54,8 @@ object App {
     //println("Länge der Liste: "+ jsonList.size)
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
-      val mongoClient = DbConnector.createClient("s0558478", "1unch30n", "hadoop05.f4.htw-berlin.de", "27020", "s0558478")
-      val collection = DbConnector.getCollectionFromDb("s0558478", "processed_articles", mongoClient)
+      val mongoClient = DbConnector.createClient("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de", "27020", "inews")
+      val collection = DbConnector.getCollectionFromDb("inews", "processed_articles", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)

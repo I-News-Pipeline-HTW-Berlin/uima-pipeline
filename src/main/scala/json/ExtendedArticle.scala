@@ -1,6 +1,6 @@
 package json
 
-import spray.json.{DefaultJsonProtocol, JsArray, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
+import spray.json.{DefaultJsonProtocol, JsArray, JsNull, JsNumber, JsObject, JsString, JsValue, RootJsonFormat}
 
 case class ExtendedArticle(val id: String,
                            val authors: List[String],
@@ -8,14 +8,14 @@ case class ExtendedArticle(val id: String,
                            val text: String,
                            val newsSite: String,
                            val links: List[String],
-                           val publishedTime: BigDecimal,
+                           val publishedTime: Any,
                            val keywords: List[String],
                            val longUrl: String,
                            val shortUrl: String,
-                           val intro: String,
+                           val intro: Any,
                            val title: String,
                            val imageLinks: List[String],
-                           val description: String,
+                           val description: Any,
                            val lemmas: List[String],
                            val readingTime: Int) {
   def lemmasAsJsStrings = lemmas.map(l => JsString(l)).toVector
@@ -38,13 +38,22 @@ object ExtendedArticleJsonProtocol extends DefaultJsonProtocol{
       "text" -> JsString(ea.text),
       "newsSite" -> JsString(ea.newsSite),
       "links" -> JsArray(ea.linksAsJsStrings),
-      "published_time" -> JsObject(Map("$date" -> JsNumber(ea.publishedTime))),
+      ea.publishedTime match {
+        case pt: BigDecimal => "published_time" -> JsObject(Map("$date" -> JsNumber(pt)))
+        case _ => "published_time" -> JsNull //JsObject(Map("$date" -> JsNull))
+      },
       "keywords" -> JsArray(ea.keywordsAsJsStrings),
       "long_url" -> JsString(ea.longUrl),
-      "intro" -> JsString(ea.intro),
+      ea.intro match {
+        case i: String => "intro" -> JsString(i)
+        case _ => "intro" -> JsNull
+      },
       "title" -> JsString(ea.title),
       "image_links" -> JsArray(ea.imageLinksAsJsStrings),
-      "description" -> JsString(ea.description),
+      ea.description match {
+        case d: String => "description" -> JsString(d)
+        case _ => "description" -> JsNull
+      },
       "lemmas" -> JsArray(ea.lemmasAsJsStrings),
       "reading_time" -> JsNumber(ea.readingTime)
     )
