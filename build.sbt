@@ -4,6 +4,8 @@ version := "0.1"
 
 scalaVersion := "2.13.1"
 
+//scalaVersion := "2.12"
+
 libraryDependencies ++= Seq(
   /* DKPro core components */
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.clearnlp-asl" % "1.10.0",
@@ -29,17 +31,33 @@ libraryDependencies ++= Seq(
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
 )
 
-assemblyJarName in assembly := "inews-uima-assembly.jar"
+ /* assemblyShadeRules in assembly := Seq(
+    case PathList("META-INF/org.apache.uima.fit/fsindexes.txt") =>
+      ShadeRule.rename("de.tudarmstadt.ukp.dkpro.core.api.**" -> "newName.@1").inAll
+  )*/
 
-assemblyShadeRules in assembly := Seq(
-  ShadeRule.rename("de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.**" ->"shadeio.@1").inAll
-  //ShadeRule.rename("org.apache.uima.fit.types.**" -> "shadeio.@1").inAll
-)
+  /*assemblyShadeRules in assembly := Seq(
+    //ShadeRule.rename("META-INF.org.apache.uima.fit.types.txt" -> "shadeio").inAll
+    ShadeRule.rename("de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.**" ->"shadeio.@1").inAll
+  )*/
 
-    assemblyMergeStrategy in assembly := {
+  /*assemblyShadeRules in assembly := Seq(
+      ShadeRule.rename("org.apache.uima.fit.**" -> "my_conf.@1")
+        .inLibrary("de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.api.segmentation-asl" % "1.10.0")
+  )*/
+
+
+//META-INF/org.apache.uima.fit/types.txt\
+
+/*assemblyMergeStrategy in assembly := {
+case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+case x => MergeStrategy.first
+}*/
+
+  /*assemblyMergeStrategy in assembly := {
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-    case x => MergeStrategy.first
-  }
+    case x => val oldStrategy = (assemblyMergeStrategy in assembly).value
+      oldStrategy(x) }*/
 
 
 

@@ -26,10 +26,10 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val sourceEncoding = ""
 
   @ConfigurationParameter(name = JSONReaderDB.USER_NAME)
-  val userName = "s0558059"
+  val userName = "inews"
 
   @ConfigurationParameter(name = JSONReaderDB.PW)
-  val pw = "f0r313g"
+  val pw = "pr3cipit4t3s"
 
   @ConfigurationParameter(name = JSONReaderDB.SERVER_ADDRESS)
   val serverAddress = "hadoop05.f4.htw-berlin.de"
@@ -38,21 +38,21 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val port = "27020"
 
   @ConfigurationParameter(name = JSONReaderDB.DB)
-  val db = "s0558059"
+  val db = "inews"
 
   @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
   val collectionName = "scraped_articles"
 
-//bisher: /home/uima/resources/last_crawl_time.txt
   @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
-  val fileLocation = "../../../uima_resources/last_crawl_time.txt"
+  val fileLocation = "last_crawl_time.txt"
 
   //val DATE_FORMAT = "EEE, MMM dd, yyyy h:mm a"
   //TODO paar Sachen in Funktionen verpacken
   val mongoClient: MongoClient = DbConnector.createClient(userName, pw, serverAddress, port, db)
   val lastCrawlTime = getLastCrawlTime
   val docs = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
-    .find(Filters.and(Filters.gt("crawl_time", lastCrawlTime), Filters.ne("text", ""), Filters.ne("title", null))).results()
+    .find(Filters.and(Filters.gt("crawl_time", lastCrawlTime), Filters.ne("text", ""),
+      Filters.ne("title", null))).results()
   println(docs.size)
   val it = docs.iterator
   var latestCrawlTime = lastCrawlTime.asDateTime().getValue
@@ -106,11 +106,11 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
 object JSONReaderDB {
   final val PARAM_SOURCE_ENCODING = ComponentParameters.PARAM_SOURCE_ENCODING
   final val ENCODING_AUTO = "auto"
-  final val USER_NAME = "s0558059"
-  final val PW = "f0r313g"
+  final val USER_NAME = "inews"
+  final val PW = "pr3cipit4t3s"
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
-  final val DB = "s0558059"
+  final val DB = "inews"
   final val COLLECTION_NAME = "scraped_articles"
-  final val FILE_LOCATION = "/home/uima/resources/last_crawl_time.txt"
+  final val FILE_LOCATION = "last_crawl_time.txt"
 }

@@ -2,6 +2,7 @@ package uima
 
 import db.{JSONReaderDB}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Div
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
@@ -10,14 +11,13 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
-//neu: ~/Dokumente/Uni/WiSe19-20/Projektstudium/uima_resources/
-//vorher: /home/uima/resources/
+
 case class Corpus(reader: CollectionReaderDescription) {
 
-  val STOPWORD_FILE = "../../../uima_resources/stopwords-de.txt"
-  val POS_TAGGER_DE_MODEL = "../../../uima_resources/de-pos-maxent.bin"
-  val SEGMENTER_DE_TOKEN_MODEL = "../../../uima_resources/de-token.bin"
-  val SEGMENTER_DE_SENTENCE_MODEL = "../../../uima_resources/de-sent.bin"
+  val STOPWORD_FILE = "src/main/resources/stopwords-de.txt"
+  val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
+  val SEGMENTER_DE_TOKEN_MODEL = "src/main/resources/de-token.bin"
+  val SEGMENTER_DE_SENTENCE_MODEL = "src/main/resources/de-sent.bin"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
@@ -90,14 +90,7 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
-    createEngineDescription(classOf[JsonWriter],
-      JsonWriter.USER_NAME, "s0558478",
-      JsonWriter.PW, "1unch30n",
-      JsonWriter.SERVER_ADDRESS, "hadoop05.f4.htw-berlin.de",
-      JsonWriter.PORT, "27020",
-      JsonWriter.DB, "s0558478",
-      JsonWriter.COLLECTION_NAME, "processed_articles"
-    )
+    createEngineDescription(classOf[JsonWriter])
   ).iterator()
 }
 

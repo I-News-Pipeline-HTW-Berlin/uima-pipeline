@@ -11,24 +11,6 @@ import org.apache.uima.fit.descriptor.ConfigurationParameter
 
 class JsonWriter extends JCasConsumer_ImplBase {
 
-  @ConfigurationParameter(name = JsonWriter.USER_NAME)
-  val userName = "s0558478"
-
-  @ConfigurationParameter(name = JsonWriter.PW)
-  val pw = "1unch30n"
-
-  @ConfigurationParameter(name = JsonWriter.SERVER_ADDRESS)
-  val serverAddress = "hadoop05.f4.htw-berlin.de"
-
-  @ConfigurationParameter(name = JsonWriter.PORT)
-  val port = "27020"
-
-  @ConfigurationParameter(name = JsonWriter.DB)
-  val db = "s0558478"
-
-  @ConfigurationParameter(name = JsonWriter.COLLECTION_NAME)
-  val collectionName = "processed_articles"
-
 
   override def process(aJCas: JCas): Unit = {
 
@@ -43,14 +25,14 @@ class JsonWriter extends JCasConsumer_ImplBase {
       data("text").asInstanceOf[String],
       data("news_site").asInstanceOf[String],
       data("links").asInstanceOf[List[String]],
-      data("published_time").asInstanceOf[BigDecimal],
+      if (data("published_time") != null) data("published_time").asInstanceOf[BigDecimal] else null,
       data("keywords").asInstanceOf[List[String]],
       data("long_url").asInstanceOf[String],
       data("short_url").asInstanceOf[String],
-      data("intro").asInstanceOf[String],
+      if (data("intro") != null) data("intro").asInstanceOf[String] else null,
       data("title").asInstanceOf[String],
       data("image_links").asInstanceOf[List[String]],
-      data("description").asInstanceOf[String],
+      if (data("description") != null) data("description").asInstanceOf[String] else null,
       lemmas,
       readingTime)
       //println(jsonString)
@@ -59,13 +41,4 @@ class JsonWriter extends JCasConsumer_ImplBase {
       metaDataStringField.setValue(jsonString)
       metaDataStringField.addToIndexes()
   }
-}
-
-  object JsonWriter {
-    final val USER_NAME = "s0558478"
-    final val PW = "1unch30n"
-    final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
-    final val PORT = "27020"
-    final val DB = "s0558478"
-    final val COLLECTION_NAME = "processed_articles"
 }

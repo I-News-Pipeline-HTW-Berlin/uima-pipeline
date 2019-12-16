@@ -41,7 +41,10 @@ object DbConnector {
     //jsonStringList.map(j => writeSingleDocumentToCollection(collection, j))
     //documentList.map(doc => collection.insertOne(doc))
 
-    val docs = jsonStringList.map(json => Document(BsonDocument(json)))
+    val docs = jsonStringList.map(json => json match {
+      case null => Document(BsonDocument())
+      case _ => Document(BsonDocument(json))
+    })
 
     /*val insertObservable = collection.insertMany(docs)
     insertObservable.subscribe(new Observer[Completed] {

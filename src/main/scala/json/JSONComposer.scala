@@ -10,14 +10,14 @@ object JSONComposer {
               text: String,
               newsSite: String,
               links: List[String],
-              publishedTime: BigDecimal,
+              publishedTime: Any,
               keywords: List[String],
               longUrl: String,
               shortUrl: String,
-              intro: String,
+              intro: Any,
               title: String,
               imageLinks: List[String],
-              description: String,
+              description: Any,
               lemmas: List[String],
               readingTime: Int): String = {
 
