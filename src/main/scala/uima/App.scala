@@ -1,14 +1,5 @@
 package uima
 
-import db.DbConnector
-import db.Helpers._
-import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.{Lemma, Token}
-import org.apache.uima.fit.util.JCasUtil
-import org.mongodb.scala.MongoCollection
-import org.mongodb.scala.bson.collection.mutable.Document
-
 object App {
 
   def main(args: Array[String]) {
@@ -48,12 +39,25 @@ object App {
       readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
     })*/
 
-
-    val testPipeIt = corpus.testPipeline()
+    // einkommentieren, um dfmodel.model zu erstellen:
+    /*val testPipeIt = corpus.annoWriterPipeline()
     testPipeIt.forEachRemaining(jcas => {
       val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
       tfidfs.iterator().forEachRemaining(tfidf => print(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
-    })
+    }) */
+
+    // nachdem dfmodel.model erstellt wurde, diese Zeilen einkommentieren und ausführen:
+    /*
+    val testPipeIt = corpus.testPipeline()
+    testPipeIt.forEachRemaining(jcas => {
+      val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
+      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      println("new document:")
+      lemmas.iterator().forEachRemaining(lemma => println(lemma.getValue))
+      tfidfs.iterator().forEachRemaining(tfidf => println(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
+      println()
+    }) */
+
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
     /*var jsonList : IndexedSeq[String] = IndexedSeq.empty
