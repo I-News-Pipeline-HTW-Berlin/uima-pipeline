@@ -8,12 +8,15 @@ import org.apache.uima.fit.util.JCasUtil
 import org.mongodb.scala.MongoCollection
 import org.mongodb.scala.bson.collection.mutable.Document
 
+//oder mit home/laureslinuxes/ noch vorne ran
+//zum testen datei hier abgelegt: ~/Dokumente/Uni/WiSe19-20/Projektstudium/uima_resources
+//für server aber: /home/uima/resources/last_crawl_time.txt
 object App {
 
   def main(args: Array[String]) {
     //val corpus = Corpus.fromDir("testResourcesJSON")
     val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles", "/home/uima/resources/last_crawl_time.txt")
+      "27020", "s0558059", "scraped_articles", "../../../uima_resources/last_crawl_time.txt")
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
     //val jcasIteratorRT = corpus.estimateReadingTime()

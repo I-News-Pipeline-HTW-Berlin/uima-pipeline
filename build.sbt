@@ -28,6 +28,14 @@ libraryDependencies ++= Seq(
 
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
 )
+
+assemblyJarName in assembly := "inews-uima-assembly.jar"
+
+assemblyShadeRules in assembly := Seq(
+  ShadeRule.rename("de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.**" ->"shadeio.@1").inAll
+  //ShadeRule.rename("org.apache.uima.fit.types.**" -> "shadeio.@1").inAll
+)
+
     assemblyMergeStrategy in assembly := {
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
     case x => MergeStrategy.first

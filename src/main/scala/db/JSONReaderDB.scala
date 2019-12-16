@@ -43,8 +43,9 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
   val collectionName = "scraped_articles"
 
+//bisher: /home/uima/resources/last_crawl_time.txt
   @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
-  val fileLocation = "/home/uima/resources/last_crawl_time.txt"
+  val fileLocation = "../../../uima_resources/last_crawl_time.txt"
 
   //val DATE_FORMAT = "EEE, MMM dd, yyyy h:mm a"
   //TODO paar Sachen in Funktionen verpacken
