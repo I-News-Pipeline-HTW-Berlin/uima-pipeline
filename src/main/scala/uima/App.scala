@@ -2,6 +2,7 @@ package uima
 
 import db.DbConnector
 import db.Helpers._
+import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.{Lemma, Token}
 import org.apache.uima.fit.util.JCasUtil
@@ -12,8 +13,15 @@ object App {
 
   def main(args: Array[String]) {
     //val corpus = Corpus.fromDir("testResourcesJSON")
-    val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
-      "27020", "inews", "scraped_articles", "last_crawl_time.txt")
+
+    //ZUM TESTEN IN FLIPS DB:
+    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")
+
+    //ZU inews server:
+    /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
+      "27020", "inews", "scraped_articles", "last_crawl_time.txt")*/
+
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
     //val jcasIteratorRT = corpus.estimateReadingTime()
@@ -42,9 +50,13 @@ object App {
 
 
     val testPipeIt = corpus.testPipeline()
+    testPipeIt.forEachRemaining(jcas => {
+      val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
+      tfidfs.iterator().forEachRemaining(tfidf => print(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
+    })
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
-    var jsonList : IndexedSeq[String] = IndexedSeq.empty
+    /*var jsonList : IndexedSeq[String] = IndexedSeq.empty
     testPipeIt.forEachRemaining(jcas => {
       val json =JCasUtil.select(jcas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue
       //jsonList.foldLeft(List.empty)((l, j) => l:+j)
@@ -62,7 +74,7 @@ object App {
     } else {
       //TODO things like that should be written to log file
       println("Currently no documents to analyze. ")
-    }
+    }*/
 
 
     //val collection = DbConnector.getCollectionFromDb()
