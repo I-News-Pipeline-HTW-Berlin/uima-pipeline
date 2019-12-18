@@ -1,18 +1,19 @@
 package uima
 
-import java.io.{BufferedOutputStream, File, FileOutputStream, IOException, ObjectOutputStream}
+import java.io._
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
-import de.tudarmstadt.ukp.dkpro.core.frequency.tfidf.model.DfStore
 import org.apache.commons.io.FileUtils
-import org.apache.uima.UimaContext
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
+import spray.json.{JsFalse, JsNumber, JsString, JsTrue, JsValue, JsonFormat}
+
 
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   val termIdfMap = Map.empty[String, Int]
+
   var docCount = 0
   /*override def initialize(context: UimaContext): Unit = {
     super.initialize(context)
@@ -20,12 +21,34 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   }*/
 
+  implicit object AnyJsonFormat extends JsonFormat[Any] {
+    def write(x: Any) = x match {
+      case n: Int => JsNumber(n)
+      case s: String => JsString(s)
+      case b: Boolean if b => JsTrue
+      case b: Boolean if !b => JsFalse
+    }
+    def read(value: JsValue) = value match {
+      case JsNumber(n) => n.intValue
+      case JsString(s) => s
+      case JsTrue => true
+      case JsFalse => false
+    }
+  }
+
   override def process(aJCas: JCas): Unit = {
+
     docCount+=1
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList
+
     //df
     lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue).toSet
-      .map(lemma => termIdfMap.updated(lemma, termIdfMap.getOrElse(lemma, 0)+1))
+      .map(lemma => termIdfMap.updated(lemma, termIdfMap.getOrElse(lemma, 0)+1))   // Set[Map[String, Int]]
+
+   /* Error:(46, 12) missing parameter type
+    .map(lemma => lemma.asInstanceOf[Lemma].getValue) */
+
+
     //lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue).filter(lemma => !termMap.contains(lemma))
   }
 
@@ -44,10 +67,17 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     }
   }
 
+
+
   override def collectionProcessComplete(): Unit = {
-    //idf
+
     termIdfMap.view.mapValues(df => docCount/df)
+    val a = AnyJsonFormat.write(termIdfMap).compactPrint
+    println(a)
+
+
   }
+
 
 
 }

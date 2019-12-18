@@ -2,7 +2,6 @@ package uima
 
 import db.JSONReaderDB
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
-import de.tudarmstadt.ukp.dkpro.core.frequency.tfidf.{TfIdfAnnotator, TfIdfWriter}
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
@@ -90,14 +89,15 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
-    createEngineDescription(classOf[TfIdfWriter],
+    createEngineDescription(classOf[IdfDictionaryCreator])
+   /* createEngineDescription(classOf[TfIdfWriter],
       TfIdfWriter.PARAM_FEATURE_PATH, "de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
       TfIdfWriter.PARAM_LOWERCASE, true,
       TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"),
     createEngineDescription(classOf[TfIdfAnnotator],
       TfIdfAnnotator.PARAM_FEATURE_PATH, "de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
       TfIdfAnnotator.PARAM_LOWERCASE, true,
-      TfIdfAnnotator.PARAM_TFDF_PATH, "src/main/resources/dfmodel.model"),
+      TfIdfAnnotator.PARAM_TFDF_PATH, "src/main/resources/dfmodel.model"), */
     //createEngineDescription(classOf[JsonWriter])
   ).iterator()
 
@@ -115,10 +115,14 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
-    createEngineDescription(classOf[TfIdfWriter],
+  /*  createEngineDescription(classOf[TfIdfWriter],
       TfIdfWriter.PARAM_FEATURE_PATH, "Lemma/de/tudarmstadt/ukp/dkpro/core/api/segementation/type",//"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
       TfIdfWriter.PARAM_LOWERCASE, true,
-      TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model")).iterator()
+      TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"))
+      */
+    createEngineDescription(classOf[IdfDictionaryCreator]))
+    .iterator()
+
 
 }
 

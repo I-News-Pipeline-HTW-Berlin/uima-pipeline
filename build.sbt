@@ -30,6 +30,7 @@ libraryDependencies ++= Seq(
   "org.apache.uima" % "uimaj-tools" % "2.8.1",
 
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
+
 )
 
  /* assemblyShadeRules in assembly := Seq(
