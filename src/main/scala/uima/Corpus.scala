@@ -101,10 +101,22 @@ case class Corpus(reader: CollectionReaderDescription) {
     //createEngineDescription(classOf[JsonWriter])
   ).iterator()
 
-  def annoWriterPipeline(): JCasIterator = iteratePipeline(
+  def writeModel(): JCasIterator = iteratePipeline(
     reader,
+    createEngineDescription(classOf[OpenNlpSegmenter],
+      OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
+      OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
+      OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[StopWordRemover],
+      StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
+    createEngineDescription(classOf[OpenNlpPosTagger],
+      OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
+      OpenNlpPosTagger.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[IxaLemmatizer],
+      IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
+      IxaLemmatizer.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[TfIdfWriter],
-      TfIdfWriter.PARAM_FEATURE_PATH, "de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
+      TfIdfWriter.PARAM_FEATURE_PATH, "Lemma/de/tudarmstadt/ukp/dkpro/core/api/segementation/type",//"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
       TfIdfWriter.PARAM_LOWERCASE, true,
       TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model")).iterator()
 

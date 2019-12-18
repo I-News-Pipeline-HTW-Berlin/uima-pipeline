@@ -1,5 +1,9 @@
 package uima
 
+import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
+import org.apache.uima.fit.util.JCasUtil
+
 object App {
 
   def main(args: Array[String]) {
@@ -40,15 +44,15 @@ object App {
     })*/
 
     // einkommentieren, um dfmodel.model zu erstellen:
-    /*val testPipeIt = corpus.annoWriterPipeline()
+    val testPipeIt = corpus.writeModel()
     testPipeIt.forEachRemaining(jcas => {
       val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
       tfidfs.iterator().forEachRemaining(tfidf => print(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
-    }) */
+    })
 
     // nachdem dfmodel.model erstellt wurde, diese Zeilen einkommentieren und ausführen:
-    /*
-    val testPipeIt = corpus.testPipeline()
+
+    /*val testPipeIt = corpus.testPipeline()
     testPipeIt.forEachRemaining(jcas => {
       val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
       val lemmas = JCasUtil.select(jcas, classOf[Lemma])
@@ -56,7 +60,7 @@ object App {
       lemmas.iterator().forEachRemaining(lemma => println(lemma.getValue))
       tfidfs.iterator().forEachRemaining(tfidf => println(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
       println()
-    }) */
+    })*/
 
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
