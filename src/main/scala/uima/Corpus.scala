@@ -120,7 +120,8 @@ case class Corpus(reader: CollectionReaderDescription) {
       TfIdfWriter.PARAM_LOWERCASE, true,
       TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"))
       */
-    createEngineDescription(classOf[IdfDictionaryCreator]))
+    createEngineDescription(classOf[IdfDictionaryCreator],
+      IdfDictionaryCreator.MODEL_PATH, "src/main/resources/tfidfmodel"))
     .iterator()
 
 

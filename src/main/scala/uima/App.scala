@@ -1,5 +1,10 @@
 package uima
 
+import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
+import org.apache.uima.fit.util.JCasUtil
+import org.josql.parser.Token
+
 object App {
 
   def main(args: Array[String]) {
@@ -58,7 +63,11 @@ object App {
       println()
     })*/
 
-    corpus.writeModel()
+    val modelIt = corpus.writeModel()
+    modelIt.forEachRemaining(jcas => {
+      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+    })
+
 
 
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()

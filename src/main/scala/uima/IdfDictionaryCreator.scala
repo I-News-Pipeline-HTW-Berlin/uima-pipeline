@@ -7,12 +7,18 @@ import org.apache.commons.io.FileUtils
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
-import spray.json.{JsFalse, JsNumber, JsString, JsTrue, JsValue, JsonFormat}
+import spray.json._
+import DefaultJsonProtocol._
+import org.apache.uima.fit.descriptor.ConfigurationParameter
 
 
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
-  val termIdfMap = Map.empty[String, Int]
+  @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
+  val modelPath = "src/main/resources/tfidfmodel"
+
+
+  var termDfMap = Map.empty[String, Int]
 
   var docCount = 0
   /*override def initialize(context: UimaContext): Unit = {
@@ -21,46 +27,25 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   }*/
 
-  implicit object AnyJsonFormat extends JsonFormat[Any] {
-    def write(x: Any) = x match {
-      case n: Int => JsNumber(n)
-      case s: String => JsString(s)
-      case b: Boolean if b => JsTrue
-      case b: Boolean if !b => JsFalse
-    }
-    def read(value: JsValue) = value match {
-      case JsNumber(n) => n.intValue
-      case JsString(s) => s
-      case JsTrue => true
-      case JsFalse => false
-    }
-  }
 
   override def process(aJCas: JCas): Unit = {
-
     docCount+=1
-    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList
-
+    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList
     //df
-    lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue).toSet
-      .map(lemma => termIdfMap.updated(lemma, termIdfMap.getOrElse(lemma, 0)+1))   // Set[Map[String, Int]]
-
-   /* Error:(46, 12) missing parameter type
-    .map(lemma => lemma.asInstanceOf[Lemma].getValue) */
-
-
-    //lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue).filter(lemma => !termMap.contains(lemma))
+    termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
+      .toSet
+      .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0)+1))
   }
 
   @throws[IOException]
-  def serialize(obj: Any, fileName: String): Unit = {
+  def serialize(json: String, fileName: String): Unit = {
     val file = new File(fileName)
     if (!file.exists) FileUtils.touch(file)
     if (file.isDirectory) throw new IOException("A directory with that name exists!")
     try {
       val objOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))
       try {
-        objOut.writeObject(obj)
+        objOut.writeObject(json)
         objOut.flush()
         objOut.close()
       } finally if (objOut != null) objOut.close()
@@ -70,14 +55,15 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
 
   override def collectionProcessComplete(): Unit = {
-
-    termIdfMap.view.mapValues(df => docCount/df)
-    val a = AnyJsonFormat.write(termIdfMap).compactPrint
-    println(a)
-
-
+    val termIdfMap = termDfMap.view.mapValues(df => docCount/df.toDouble).toMap
+    val json = termIdfMap.toJson.compactPrint
+    println("Size of map: "+termIdfMap.size)
+    println(termIdfMap)
+    println(json)
+    serialize(json, modelPath)
   }
+}
 
-
-
+object IdfDictionaryCreator {
+  final val MODEL_PATH = "src/main/resources/tfidfmodel"
 }
