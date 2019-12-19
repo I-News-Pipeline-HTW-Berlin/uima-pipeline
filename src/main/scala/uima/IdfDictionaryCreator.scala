@@ -15,7 +15,7 @@ import org.apache.uima.fit.descriptor.ConfigurationParameter
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
-  val modelPath = "src/main/resources/tfidfmodel"
+  val modelPath = "src/main/resources/tfidfmodel.json"
 
 
   var termDfMap = Map.empty[String, Int]
@@ -65,5 +65,5 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 }
 
 object IdfDictionaryCreator {
-  final val MODEL_PATH = "src/main/resources/tfidfmodel"
+  final val MODEL_PATH = "src/main/resources/tfidfmodel.json"
 }

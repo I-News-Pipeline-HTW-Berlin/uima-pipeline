@@ -121,7 +121,9 @@ case class Corpus(reader: CollectionReaderDescription) {
       TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"))
       */
     createEngineDescription(classOf[IdfDictionaryCreator],
-      IdfDictionaryCreator.MODEL_PATH, "src/main/resources/tfidfmodel"))
+      IdfDictionaryCreator.MODEL_PATH, "src/main/resources/tfidfmodel.json"),
+    createEngineDescription(classOf[TfIdfCalculator],
+      TfIdfCalculator.MODEL_PATH, "src/main/resources/tfidfmodel.json"))
     .iterator()
 
 
