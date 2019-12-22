@@ -123,7 +123,8 @@ case class Corpus(reader: CollectionReaderDescription) {
     createEngineDescription(classOf[IdfDictionaryCreator],
       IdfDictionaryCreator.MODEL_PATH, "src/main/resources/tfidfmodel.json"),
     createEngineDescription(classOf[TfIdfCalculator],
-      TfIdfCalculator.MODEL_PATH, "src/main/resources/tfidfmodel.json"))
+      TfIdfCalculator.MODEL_PATH, "src/main/resources/tfidfmodel.json",
+      TfIdfCalculator.N_MOST_RELEVANT, "10"))
     .iterator()
 
 
