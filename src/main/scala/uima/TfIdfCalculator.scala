@@ -15,8 +15,8 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
   @ConfigurationParameter(name = TfIdfCalculator.MODEL_PATH)
   val modelPath = "src/main/resources/tfidfmodel.json"
 
-  @ConfigurationParameter(name = TfIdfCalculator.N_MOST_RELEVANT)
-  val nMostRelevant = "10"
+/*  @ConfigurationParameter(name = TfIdfCalculator.N_MOST_RELEVANT)
+  val nMostRelevant = "10" */
 
 
   // deserialize tfidfmodel.json and read in as map
@@ -30,6 +30,8 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList
 
+    val textLength = lemmas.size
+
     // create map with lemmas and their tf-values
     val tfMap = lemmas
       .map(lemma => lemma.asInstanceOf[Lemma].getValue)
@@ -41,7 +43,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
     println(tfidfMap)
 
     // get n most relevant (lemmas with highest tfidf values)
-    val mostRelevantLemmas = getMostRelevant(nMostRelevant, tfidfMap)
+    val mostRelevantLemmas = getMostRelevant((textLength / 35).toString, tfidfMap)
     println(mostRelevantLemmas)
   }
 
@@ -64,7 +66,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
   object TfIdfCalculator {
     final val MODEL_PATH = "src/main/resources/tfidfmodel.json"
-    final val N_MOST_RELEVANT = "10"
+  //  final val N_MOST_RELEVANT = "10"
   }
 
 
