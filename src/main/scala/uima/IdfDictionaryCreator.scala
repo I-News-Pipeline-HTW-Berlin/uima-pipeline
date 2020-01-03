@@ -5,11 +5,12 @@ import java.io._
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.commons.io.FileUtils
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
-import org.apache.uima.fit.util.JCasUtil
+import org.apache.uima.fit.util.{JCasUtil, LifeCycleUtil}
 import org.apache.uima.jcas.JCas
 import spray.json._
 import DefaultJsonProtocol._
 import org.apache.uima.fit.descriptor.ConfigurationParameter
+import org.apache.uima.fit.factory.AnalysisEngineFactory
 
 
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
@@ -21,6 +22,7 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   var termDfMap = Map.empty[String, Int]
 
   var docCount = 0
+
   /*override def initialize(context: UimaContext): Unit = {
     super.initialize(context)
     //val dfStore = new DfStore(())
@@ -35,6 +37,12 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0)+1))
+
+    if(docCount >= aJCas.getView("SIZE_VIEW").getDocumentText.toInt){
+      println("now please end process")
+      val desc = AnalysisEngineFactory.createEngineDescription(this.getClass)
+      LifeCycleUtil.collectionProcessComplete(AnalysisEngineFactory.createEngine(desc))
+    }
   }
 
   @throws[IOException]
@@ -52,14 +60,13 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     }
   }
 
-
-
+  //Problem: Diese Methode wird erst am Ende der Pipeline aufgerufen, was für uns zu spät ist
   override def collectionProcessComplete(): Unit = {
     val termIdfMap = termDfMap.view.mapValues(df => docCount/df.toDouble).toMap
     val json = termIdfMap.toJson.compactPrint
-    println("Size of map: "+termIdfMap.size)
+   /* println("Size of map: "+termIdfMap.size)
     println(termIdfMap)
-    println(json)
+    println(json)*/
     serialize(json, modelPath)
   }
 }

@@ -7,8 +7,9 @@ import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import json.{JSONComposer, JSONParser}
-import org.apache.uima.fit.descriptor.ConfigurationParameter
+import org.apache.uima.fit.descriptor.{ConfigurationParameter, SofaCapability}
 
+@SofaCapability(inputSofas = Array("MOST_RELEVANT_VIEW"))
 class JsonWriter extends JCasConsumer_ImplBase {
 
 
@@ -16,6 +17,8 @@ class JsonWriter extends JCasConsumer_ImplBase {
 
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
     val readingTime = JCasUtil.select(aJCas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue.toInt
+    val mostRelevantView = aJCas.getView("MOST_RELEVANT_VIEW")
+    val mostRelevantLemmas = JCasUtil.select(mostRelevantView, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
     val originalArticle = aJCas.getView("META_VIEW").getDocumentText
     val data = JSONParser.parseAll(originalArticle)
     val jsonString = JSONComposer.compose(
@@ -34,7 +37,8 @@ class JsonWriter extends JCasConsumer_ImplBase {
       data("image_links").asInstanceOf[List[String]],
       if (data("description") != null) data("description").asInstanceOf[String] else null,
       lemmas,
-      readingTime)
+      readingTime,
+      mostRelevantLemmas)
       //println(jsonString)
       val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
       metaDataStringField.setKey("json")

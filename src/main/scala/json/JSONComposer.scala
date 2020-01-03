@@ -19,7 +19,8 @@ object JSONComposer {
               imageLinks: List[String],
               description: Any,
               lemmas: List[String],
-              readingTime: Int): String = {
+              readingTime: Int,
+              mostRelevantLemmas: List[String]): String = {
 
     ExtendedArticle(
       id,

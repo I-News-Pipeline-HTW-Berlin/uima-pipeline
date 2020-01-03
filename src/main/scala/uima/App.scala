@@ -65,7 +65,10 @@ object App {
 
     val modelIt = corpus.writeModel()
     modelIt.forEachRemaining(jcas => {
-      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      val lemmas = JCasUtil.select(jcas.getView("MOST_RELEVANT_VIEW"), classOf[Lemma])
+      println("most relevant in this article:")
+      lemmas.forEach(l => println(l))
+      println()
     })
 
 

@@ -95,6 +95,8 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
       aJCas.setDocumentText(textToAnalyze)
       aJCas.createView("META_VIEW")
       aJCas.getView("META_VIEW").setDocumentText(json)
+      aJCas.createView("SIZE_VIEW")
+      aJCas.getView("SIZE_VIEW").setDocumentText(docs.size.toString)
       mCurrentIndex+=1
   }
 
