@@ -21,7 +21,6 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
 
   // deserialize tfidfmodel.json and read in as map
-
   val jsonString: String = deserialize[String](modelPath)
   val jsonAst: JsValue = jsonString.parseJson
   val termIdfMap = jsonAst.convertTo[Map[String, Int]]

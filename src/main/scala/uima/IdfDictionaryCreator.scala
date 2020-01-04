@@ -9,6 +9,7 @@ import org.apache.uima.fit.util.{JCasUtil, LifeCycleUtil}
 import org.apache.uima.jcas.JCas
 import spray.json._
 import DefaultJsonProtocol._
+import json.JSONParser
 import org.apache.uima.fit.descriptor.ConfigurationParameter
 import org.apache.uima.fit.factory.AnalysisEngineFactory
 
@@ -17,11 +18,16 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
   val modelPath = "src/main/resources/tfidfmodel.json"
+  val oldModel = deserialize(modelPath)
+  val docCountOld = oldModel.getOrElse("$docCount$", 0)
 
+  //val jsonString: String = deserialize[String](modelPath)
+  var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
+                          .map(entry => (entry._1, docCountOld/entry._2))
 
-  var termDfMap = Map.empty[String, Int]
+ // var termDfMap = Map.empty[String, Int]
 
-  var docCount = 0
+  var docCountNew = 0
 
   /*override def initialize(context: UimaContext): Unit = {
     super.initialize(context)
@@ -31,18 +37,35 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
 
   override def process(aJCas: JCas): Unit = {
-    docCount+=1
+    docCountNew+=1
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList
     //df
     termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0)+1))
-
+   /* println("content of size view: "+aJCas.getView("SIZE_VIEW").getDocumentText)
     if(docCount >= aJCas.getView("SIZE_VIEW").getDocumentText.toInt){
       println("now please end process")
       val desc = AnalysisEngineFactory.createEngineDescription(this.getClass)
       LifeCycleUtil.collectionProcessComplete(AnalysisEngineFactory.createEngine(desc))
+    }*/
+  }
+
+  @SuppressWarnings(Array("unchecked"))
+  @throws[IOException]
+  def deserialize(filePath: String): Map[String, Double] = try {
+    val file = new File(filePath)
+    if(!file.exists) Map.empty[String, Double]
+    val in = new ObjectInputStream(new FileInputStream(new File(filePath)))
+    try{
+      val jsonString = in.readObject.asInstanceOf[String]
+      JSONParser.parseIdfModel(jsonString)
     }
+    catch {
+          // warum classnotfoundexception?
+      case e: ClassNotFoundException =>
+        throw new IOException(e)
+    } finally if (in != null) in.close()
   }
 
   @throws[IOException]
@@ -62,7 +85,8 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   //Problem: Diese Methode wird erst am Ende der Pipeline aufgerufen, was für uns zu spät ist
   override def collectionProcessComplete(): Unit = {
-    val termIdfMap = termDfMap.view.mapValues(df => docCount/df.toDouble).toMap
+    val docCountBoth = docCountOld+docCountNew
+    val termIdfMap = termDfMap.view.mapValues(df => docCountBoth/df.toDouble).toMap + ("$docCount$" -> docCountBoth)
     val json = termIdfMap.toJson.compactPrint
    /* println("Size of map: "+termIdfMap.size)
     println(termIdfMap)

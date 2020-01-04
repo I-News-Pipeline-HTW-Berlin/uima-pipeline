@@ -14,6 +14,14 @@ object JSONParser {
     Source.fromInputStream(res.getInputStream).mkString
   }
 
+  def parseIdfModel(json: String) : Map[String, Double] = {
+    val jsonAst = json.parseJson
+    val data = jsonAst.convertTo[Map[String, JsValue]]
+    data.map(entry => (entry._1, entry._2 match {
+      case JsNumber(value) => value.toDouble
+    }))
+  }
+
   def parseStrings(json: String) : Map[String, String] = {
 
     val jsonAst = json.parseJson
