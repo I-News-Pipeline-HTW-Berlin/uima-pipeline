@@ -16,8 +16,11 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory
 
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
+  //TODO falls noch zeit sollten externe Resourcen injiziert werden (s. @ExternalResource)
+
   @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
   val modelPath = "src/main/resources/tfidfmodel.json"
+
   val oldModel = deserialize(modelPath)
   val docCountOld = oldModel.getOrElse("$docCount$", 0)
 

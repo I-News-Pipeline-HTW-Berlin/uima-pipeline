@@ -1,6 +1,8 @@
 package uima
 
+import db.DbConnector
 import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.util.JCasUtil
 import org.josql.parser.Token
@@ -44,13 +46,6 @@ object App {
       readingTimes.iterator().forEachRemaining(rt => print(rt.getKey+": "+rt.getValue))
     })*/
 
-    // einkommentieren, um dfmodel.model zu erstellen:
-   /* val testPipeIt = corpus.writeModel()
-    testPipeIt.forEachRemaining(jcas => {
-      val tfidfs = JCasUtil.select(jcas, classOf[Tfidf])
-      tfidfs.iterator().forEachRemaining(tfidf => print(tfidf.getTerm + ", tfidfwert: " + tfidf.getTfidfValue))
-    }) */
-
     // nachdem dfmodel.model erstellt wurde, diese Zeilen einkommentieren und ausführen:
 
     /*val testPipeIt = corpus.testPipeline()
@@ -65,17 +60,16 @@ object App {
 
     val modelIt = corpus.writeModel()
     modelIt.forEachRemaining(jcas => {
-      val lemmas = JCasUtil.select(jcas.getView("MOST_RELEVANT_VIEW"), classOf[Lemma])
-      println("most relevant in this article:")
+      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      /*println("most relevant in this article:")
       lemmas.forEach(l => println(l))
-      println()
+      println()*/
     })
 
-
-
+    val testPipeIt = corpus.testPipeline()
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
-    /*var jsonList : IndexedSeq[String] = IndexedSeq.empty
+    var jsonList : IndexedSeq[String] = IndexedSeq.empty
     testPipeIt.forEachRemaining(jcas => {
       val json =JCasUtil.select(jcas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue
       //jsonList.foldLeft(List.empty)((l, j) => l:+j)
@@ -85,15 +79,15 @@ object App {
     //println("Länge der Liste: "+ jsonList.size)
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
-      val mongoClient = DbConnector.createClient("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de", "27020", "inews")
-      val collection = DbConnector.getCollectionFromDb("inews", "processed_articles", mongoClient)
+      val mongoClient = DbConnector.createClient("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de", "27020", "s0558059")
+      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
     } else {
       //TODO things like that should be written to log file
       println("Currently no documents to analyze. ")
-    }*/
+    }
 
 
     //val collection = DbConnector.getCollectionFromDb()
