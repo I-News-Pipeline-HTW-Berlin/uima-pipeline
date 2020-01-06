@@ -38,7 +38,8 @@ object JSONComposer {
       imageLinks,
       description,
       lemmas,
-      readingTime).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
+      readingTime,
+      mostRelevantLemmas).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
   }
 
 }

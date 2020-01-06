@@ -1,6 +1,6 @@
 package uima
 
-import db.JSONReaderDB
+import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
@@ -13,7 +13,7 @@ import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
 import org.apache.uima.fit.util.LifeCycleUtil
 
-case class Corpus(reader: CollectionReaderDescription) {
+case class Corpus(reader: CollectionReaderDescription, readerForModel: CollectionReaderDescription) {
 
   val STOPWORD_FILE = "src/main/resources/stopwords-de.txt"
   val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
@@ -101,7 +101,7 @@ case class Corpus(reader: CollectionReaderDescription) {
       IdfDictionaryCreator.MODEL_PATH, "src/main/resources/idfmodel.json")
     val idfDictCreator = AnalysisEngineFactory.createEngine(idfDictCreatorDesc)*/
     iteratePipeline(
-      reader,
+      readerForModel,
       createEngineDescription(classOf[OpenNlpSegmenter],
         OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
@@ -141,8 +141,12 @@ object Corpus {
       classOf[JSONReader],
       ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION, directory,
       ResourceCollectionReaderBase.PARAM_PATTERNS, pattern,
-      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang
-    ))
+      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang),
+      createReaderDescription(
+      classOf[JSONReaderDbForFirstPipeline],
+      ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION, directory,
+      ResourceCollectionReaderBase.PARAM_PATTERNS, pattern,
+      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang))
   }
 
   def fromDb(userName: String, pw: String, serverAddress: String, port: String, db: String, collectionName: String, fileLocation: String): Corpus = {
@@ -155,7 +159,15 @@ object Corpus {
       JSONReaderDB.PORT, port,
       JSONReaderDB.DB, db,
       JSONReaderDB.COLLECTION_NAME, collectionName,
-      JSONReaderDB.FILE_LOCATION, fileLocation
-    ))
+      JSONReaderDB.FILE_LOCATION, fileLocation),
+      createReaderDescription(
+      classOf[JSONReaderDbForFirstPipeline],
+      JSONReaderDB.USER_NAME, userName,
+      JSONReaderDB.PW, pw,
+      JSONReaderDB.SERVER_ADDRESS, serverAddress,
+      JSONReaderDB.PORT, port,
+      JSONReaderDB.DB, db,
+      JSONReaderDB.COLLECTION_NAME, collectionName,
+      JSONReaderDB.FILE_LOCATION, fileLocation))
   }
 }

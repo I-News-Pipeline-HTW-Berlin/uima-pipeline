@@ -19,14 +19,14 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   //TODO falls noch zeit sollten externe Resourcen injiziert werden (s. @ExternalResource)
 
   @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
-  val modelPath = "src/main/resources/tfidfmodel.json"
+  val modelPath = "src/main/resources/idfmodel.json"
 
   val oldModel = deserialize(modelPath)
-  val docCountOld = oldModel.getOrElse("$docCount$", 0)
+  val docCountOld = oldModel.getOrElse("$docCount$", 0.0)
 
   //val jsonString: String = deserialize[String](modelPath)
   var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
-                          .map(entry => (entry._1, docCountOld/entry._2))
+                          .map(entry => (entry._1, (docCountOld/entry._2).toInt))
 
  // var termDfMap = Map.empty[String, Int]
 
@@ -57,8 +57,10 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   @SuppressWarnings(Array("unchecked"))
   @throws[IOException]
   def deserialize(filePath: String): Map[String, Double] = try {
-    val file = new File(filePath)
-    if(!file.exists) Map.empty[String, Double]
+    if(! new File(filePath).exists()) {
+      println("file doesnt exist")
+      return Map.empty[String, Double]
+    }
     val in = new ObjectInputStream(new FileInputStream(new File(filePath)))
     try{
       val jsonString = in.readObject.asInstanceOf[String]
@@ -99,5 +101,5 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 }
 
 object IdfDictionaryCreator {
-  final val MODEL_PATH = "src/main/resources/tfidfmodel.json"
+  final val MODEL_PATH = "src/main/resources/idfmodel.json"
 }
