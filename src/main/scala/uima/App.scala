@@ -13,10 +13,14 @@ object App {
     //val corpus = Corpus.fromDir("testResourcesJSON")
 
     //ZUM TESTEN IN FLIPS DB:
-    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")
+    /*val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")*/
 
-    //ZU inews server:
+    //ZUM TESTEN, OB ES FUNZT BEI MEHRMALIGEN DURCHLAUF:
+    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "test_scraped_articles_sorted", "last_crawl_time.txt")
+
+    //AUF INEWS SERVER LAUFEN LASSEN:
     /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
       "27020", "inews", "scraped_articles", "last_crawl_time.txt")*/
 
@@ -58,6 +62,9 @@ object App {
       println()
     })*/
 
+    /**
+     * erste Pipeline (mit IDF):
+     */
     val modelIt = corpus.writeModel()
     modelIt.forEachRemaining(jcas => {
       val lemmas = JCasUtil.select(jcas, classOf[Lemma])
@@ -66,6 +73,9 @@ object App {
       println()*/
     })
 
+    /**
+     * 2. Pipeline (mit TF-IDF):
+     */
     val testPipeIt = corpus.testPipeline()
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
@@ -80,7 +90,7 @@ object App {
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
       val mongoClient = DbConnector.createClient("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de", "27020", "s0558059")
-      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles", mongoClient)
+      val collection = DbConnector.getCollectionFromDb("s0558059", "test_processed_articles", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)

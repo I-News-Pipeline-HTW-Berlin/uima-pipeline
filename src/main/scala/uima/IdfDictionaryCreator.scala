@@ -38,7 +38,12 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   }*/
 
-
+  /**
+   * 1. step in calculating TF-IDF:
+   * calculates the document frequency (df) ~ number of docs containing the term (here: lemma)
+   * and saving it in termDfMap (lemma -> nrDocsContainingLemma)
+   * @param aJCas
+   */
   override def process(aJCas: JCas): Unit = {
     docCountNew+=1
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList
@@ -88,10 +93,13 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     }
   }
 
-  //Problem: Diese Methode wird erst am Ende der Pipeline aufgerufen, was für uns zu spät ist
+  /**
+   * 2. step: calculates the Inverse Document Frequency (IDF) and saves it to a file
+   * = docCountBoth(nrOfDocs in total at the current moment) / DF-value (nrOfDocs containing lemma)
+   */
   override def collectionProcessComplete(): Unit = {
     val docCountBoth = docCountOld+docCountNew
-    val termIdfMap = termDfMap.view.mapValues(df => docCountBoth/df.toDouble).toMap + ("$docCount$" -> docCountBoth)
+    val termIdfMap = termDfMap.view.mapValues(df => scala.math.log(docCountBoth/df.toDouble)).toMap + ("$docCount$" -> docCountBoth)
     val json = termIdfMap.toJson.compactPrint
    /* println("Size of map: "+termIdfMap.size)
     println(termIdfMap)

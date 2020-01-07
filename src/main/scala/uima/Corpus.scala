@@ -92,7 +92,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[TfIdfCalculator],
-      TfIdfCalculator.MODEL_PATH, "src/main/resources/idfmodel.json"),
+      TfIdfCalculator.MODEL_PATH, "src/main/resources/idfmodel.json",
+      TfIdfCalculator.N_MOST_DENOM, "35"),
     createEngineDescription(classOf[JsonWriter])
   ).iterator()
 
@@ -162,12 +163,12 @@ object Corpus {
       JSONReaderDB.FILE_LOCATION, fileLocation),
       createReaderDescription(
       classOf[JSONReaderDbForFirstPipeline],
-      JSONReaderDB.USER_NAME, userName,
-      JSONReaderDB.PW, pw,
-      JSONReaderDB.SERVER_ADDRESS, serverAddress,
-      JSONReaderDB.PORT, port,
-      JSONReaderDB.DB, db,
-      JSONReaderDB.COLLECTION_NAME, collectionName,
-      JSONReaderDB.FILE_LOCATION, fileLocation))
+        JSONReaderDbForFirstPipeline.USER_NAME, userName,
+        JSONReaderDbForFirstPipeline.PW, pw,
+        JSONReaderDbForFirstPipeline.SERVER_ADDRESS, serverAddress,
+        JSONReaderDbForFirstPipeline.PORT, port,
+        JSONReaderDbForFirstPipeline.DB, db,
+        JSONReaderDbForFirstPipeline.COLLECTION_NAME, collectionName,
+        JSONReaderDbForFirstPipeline.FILE_LOCATION, fileLocation))
   }
 }
