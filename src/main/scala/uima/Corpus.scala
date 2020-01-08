@@ -93,7 +93,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       IxaLemmatizer.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[TfIdfCalculator],
       TfIdfCalculator.MODEL_PATH, "src/main/resources/idfmodel.json",
-      TfIdfCalculator.N_MOST_DENOM, "35"),
+      TfIdfCalculator.PERCENT_OF_LEMMAS, "0.0285"),
     createEngineDescription(classOf[JsonWriter],
       JsonWriter.DEPARTMENTS_PATH, "src/main/resources/departments.json")
   ).iterator()

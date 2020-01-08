@@ -16,8 +16,8 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
   @ConfigurationParameter(name = TfIdfCalculator.MODEL_PATH)
   val modelPath = "src/main/resources/idfmodel.json"
 
-  @ConfigurationParameter(name = TfIdfCalculator.N_MOST_DENOM)
-  val nMostDenom = "35"
+  @ConfigurationParameter(name = TfIdfCalculator.PERCENT_OF_LEMMAS)
+  val percentOfLemmas = "0.0285"
 
 
   // deserialize tfidfmodel.json and read in as map
@@ -48,7 +48,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
     //println(tfidfMap)
 
     // get n most relevant (lemmas with highest tfidf values)
-    val mostRelevantLemmas = getMostRelevant((nrOfLemmas / nMostDenom.toInt).toString, tfidfMap)
+    val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toString, tfidfMap)
     /*println("next Article:")
     println(mostRelevantLemmas)
     println()*/
@@ -74,7 +74,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
   object TfIdfCalculator {
     final val MODEL_PATH = "src/main/resources/idfmodel.json"
-    final val N_MOST_DENOM = "35"
+    final val PERCENT_OF_LEMMAS = "0.0285"
   }
 
 
