@@ -16,6 +16,9 @@ class JsonWriter extends JCasConsumer_ImplBase {
   @ConfigurationParameter(name = JsonWriter.DEPARTMENTS_PATH)
   val departmentsPath = "src/main/resources/departments.json"
 
+  //für departments:
+  val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
+
   override def process(aJCas: JCas): Unit = {
 
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
@@ -24,9 +27,9 @@ class JsonWriter extends JCasConsumer_ImplBase {
     val mostRelevantLemmas = JCasUtil.select(mostRelevantView, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
     val originalArticle = aJCas.getView("META_VIEW").getDocumentText
     val data = JSONParser.parseAll(originalArticle)
-    //get departments:
-    val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
+    println(data("keywords").asInstanceOf[List[String]])
     val departments = DepartmentMapping.getDepartmentsForArticle(data("keywords").asInstanceOf[List[String]], depKeywordsMapping)
+    println(departments)
     val jsonString = JSONComposer.compose(
       data("_id").asInstanceOf[String],
       data("authors").asInstanceOf[List[String]],
