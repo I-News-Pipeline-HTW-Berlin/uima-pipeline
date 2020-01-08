@@ -26,7 +26,9 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   //val jsonString: String = deserialize[String](modelPath)
   var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
-                          .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2)))))
+                          .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2))).toLong))
+
+
  // var termDfMap = Map.empty[String, Int]
 
   var docCountNew = 0
@@ -49,7 +51,7 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     //df
     termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
-      .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0)+1))
+      .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0L)+1L))
    /* println("content of size view: "+aJCas.getView("SIZE_VIEW").getDocumentText)
     if(docCount >= aJCas.getView("SIZE_VIEW").getDocumentText.toInt){
       println("now please end process")

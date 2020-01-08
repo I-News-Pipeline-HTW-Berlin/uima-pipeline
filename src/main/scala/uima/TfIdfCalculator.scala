@@ -48,7 +48,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
     //println(tfidfMap)
 
     // get n most relevant (lemmas with highest tfidf values)
-    val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toString, tfidfMap)
+    val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toInt.toString, tfidfMap)
     /*println("next Article:")
     println(mostRelevantLemmas)
     println()*/
