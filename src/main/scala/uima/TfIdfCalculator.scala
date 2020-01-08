@@ -5,11 +5,10 @@ import java.io.{File, FileInputStream, IOException, ObjectInputStream}
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import org.apache.uima.fit.util.{JCasUtil, LifeCycleUtil}
+import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
+import spray.json.DefaultJsonProtocol._
 import spray.json._
-import DefaultJsonProtocol._
-import org.apache.uima.analysis_engine.AnalysisEngine
 
 class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
@@ -40,23 +39,19 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
     // create map with lemmas and their calculated tfIdf-values
     aJCas.createView("MOST_RELEVANT_VIEW")
     val mostRelevantView = aJCas.getView("MOST_RELEVANT_VIEW")
-    val tfidfMap = tfMap.map(lemma => ({
+    val tfidfMap = tfMap.map(lemma => ( {
       val anno = new Lemma(mostRelevantView)
       anno.setValue(lemma._1)
       anno
     }, lemma._2 * termIdfMap(lemma._1)))
-    //println(tfidfMap)
 
     // get n most relevant (lemmas with highest tfidf values)
-    val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toInt.toString, tfidfMap)
-    /*println("next Article:")
-    println(mostRelevantLemmas)
-    println()*/
+    val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toInt, tfidfMap)
     mostRelevantLemmas.foreach(_.addToIndexes())
   }
 
-  def getMostRelevant(amount: String, tfIdfMap: Map[Lemma, Double]): List[Lemma] = {
-    List(tfIdfMap.toSeq.sortWith(_._2 > _._2):_*).take(amount.toInt).toMap.keys.toList
+  def getMostRelevant(amount: Int, tfIdfMap: Map[Lemma, Double]): List[Lemma] = {
+    List(tfIdfMap.toSeq.sortWith(_._2 > _._2): _*).take(amount).toMap.keys.toList
   }
 
   @SuppressWarnings(Array("unchecked"))
@@ -72,9 +67,9 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
 }
 
-  object TfIdfCalculator {
-    final val MODEL_PATH = "src/main/resources/idfmodel.json"
-    final val PERCENT_OF_LEMMAS = "0.0285"
-  }
+object TfIdfCalculator {
+  final val MODEL_PATH = "src/main/resources/idfmodel.json"
+  final val PERCENT_OF_LEMMAS = "0.0285"
+}
 
 

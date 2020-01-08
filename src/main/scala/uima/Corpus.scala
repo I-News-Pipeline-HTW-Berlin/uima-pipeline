@@ -79,8 +79,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[TokenTrimmer],
       TokenTrimmer.PARAM_PREFIXES, Array("\"", ".", "|", "“", "„", "-", "_", "—"),
-      TokenTrimmer.PARAM_SUFFIXES, Array()
-    ),
+      TokenTrimmer.PARAM_SUFFIXES, Array()),
     createEngineDescription(classOf[TrailingCharacterRemover],
       TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
       TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,.:|_„-“^»*’()&/\"'©§'—«·=\\E0-9]+"),
@@ -129,11 +128,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       createEngineDescription(classOf[IxaLemmatizer],
         IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
         IxaLemmatizer.PARAM_LANGUAGE, "de"),
-      /*  createEngineDescription(classOf[TfIdfWriter],
-          TfIdfWriter.PARAM_FEATURE_PATH, "Lemma/de/tudarmstadt/ukp/dkpro/core/api/segementation/type",//"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
-          TfIdfWriter.PARAM_LOWERCASE, true,
-          TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"))
-          */
+
       createEngineDescription(classOf[IdfDictionaryCreator],
         IdfDictionaryCreator.MODEL_PATH, "src/main/resources/idfmodel.json")
     ).iterator()
