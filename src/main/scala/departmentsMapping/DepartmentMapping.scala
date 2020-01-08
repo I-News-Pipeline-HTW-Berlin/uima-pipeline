@@ -3,8 +3,12 @@ package departmentsMapping
 import java.io.{File, FileInputStream, IOException, ObjectInputStream}
 
 import json.JSONParser
+import spray.json.JsValue
+
+import scala.io.Source
 
 object DepartmentMapping {
+
 
   def getDepartmentsForArticle(keywords: List[String], dep_keywords_dict: Map[String, List[String]]) = {
     dep_keywords_dict.flatMap(dict => keywords.foldLeft(List[String]())((list, entry) =>
@@ -16,20 +20,31 @@ object DepartmentMapping {
 
   @SuppressWarnings(Array("unchecked"))
   @throws[IOException]
-  def deserialize(filePath: String): Map[String, List[String]] = try {
-    if(! new File(filePath).exists()) {
-      println("file doesnt exist")
-      return Map.empty[String, List[String]]
-    }
-    val in = new ObjectInputStream(new FileInputStream(new File(filePath)))
-    try{
-      val jsonString = in.readObject.asInstanceOf[String]
-      JSONParser.parseDepartmentKeywordsMapping(jsonString)
+  def deserialize(filePath: String):  Map[String, List[String]] = try {
+    try {
+      if (new File(filePath).exists) {
+        val fileSource = Source.fromFile(filePath)
+        var jsonString = ""
+        val linesIt = fileSource.getLines()
+        while (linesIt.hasNext) {
+          jsonString += linesIt.next()
+        }
+        try {
+          println(jsonString)
+          return JSONParser.parseDepartmentKeywordsMapping(jsonString)
+        }
+        Map.empty[String, List[String]]
+      }
+      else {
+        println("departments.json file doesnt exist.")
+        Map.empty[String, List[String]]
+      }
     }
     catch {
       // warum classnotfoundexception?
-      case e: ClassNotFoundException =>
-        throw new IOException(e)
-    } finally if (in != null) in.close()
+      case e: ClassNotFoundException => throw new IOException(e)
+    }
   }
+
+
 }

@@ -64,7 +64,7 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   @throws[IOException]
   def deserialize(filePath: String): Map[String, Double] = try {
     if(! new File(filePath).exists()) {
-      println("file doesnt exist")
+      println("idf-model file doesnt exist")
       return Map.empty[String, Double]
     }
     val in = new ObjectInputStream(new FileInputStream(new File(filePath)))
