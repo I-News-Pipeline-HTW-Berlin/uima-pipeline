@@ -19,7 +19,9 @@ object JSONComposer {
               imageLinks: List[String],
               description: Any,
               lemmas: List[String],
-              readingTime: Int): String = {
+              readingTime: Int,
+              mostRelevantLemmas: List[String],
+              departments: List[String]): String = {
 
     ExtendedArticle(
       id,
@@ -37,7 +39,9 @@ object JSONComposer {
       imageLinks,
       description,
       lemmas,
-      readingTime).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
+      readingTime,
+      mostRelevantLemmas,
+      departments).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
   }
 
 }

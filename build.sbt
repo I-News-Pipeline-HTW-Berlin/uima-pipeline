@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   /*"de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.languagetool-asl" % "1.10.0",*/
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.ixa-asl" % "1.10.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.io.json-asl" % "1.10.0",
+  "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.frequency-asl" % "1.10.0",
 
   /* UIMA */
   "org.apache.uima" % "uimaj-as-activemq" % "2.10.3",
@@ -29,6 +30,7 @@ libraryDependencies ++= Seq(
   "org.apache.uima" % "uimaj-tools" % "2.8.1",
 
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
+
 )
 
  /* assemblyShadeRules in assembly := Seq(
