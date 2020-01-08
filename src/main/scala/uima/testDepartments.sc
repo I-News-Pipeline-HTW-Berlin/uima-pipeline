@@ -1,7 +1,7 @@
-val keywords: List[String] = List("Bahn AG", "Deutsche Bahn", "Verspätung", "Verkehr",
+val keywords_sample: List[String] = List("Bahn AG", "Deutsche Bahn", "Verspätung", "Verkehr",
   "Öko", "Politik", "Zug")
 
-val dep_keywords_dict = Map("Politik" -> List(
+val departments_dict = Map("Politik" -> List(
     "Politik", "Verkehr", "Deutschland", "Europa", "Amerika", "Afrika", "Asien",
   "Nahost", "Netzpolitik"),
                 "Umwelt" -> List(
@@ -9,13 +9,17 @@ val dep_keywords_dict = Map("Politik" -> List(
     "Automobilindustrie","Fahrberichte","Elektromobilität","Fahrrad","Oldtimer",
     "Verkehrsrecht / Service","Führerscheintest"))
 
+//final method:
+def getDepartmentsForArticle(keywords: List[String], dep_keywords_dict: Map[String, List[String]]) = {
+  dep_keywords_dict.flatMap(dict => keywords.foldLeft(List[String]())((list, entry) =>
+    (list, entry) match {
+      case a if dict._2.contains(entry) && !list.contains(dict._1) => dict._1::list
+      case _ => list
+    })).toList
+}
 
-//final: (.toList am Ende vielleicht überflüssig?!)
-val deps_final = dep_keywords_dict.flatMap(dict => keywords.foldLeft(List[String]())((list, entry) =>
-  (list, entry) match {
-    case a if dict._2.contains(entry) && !list.contains(dict._1) => dict._1::list
-    case _ => list
-})).toList
+getDepartmentsForArticle(keywords_sample, departments_dict)
+
 
 
 
@@ -25,7 +29,7 @@ val deps_final = dep_keywords_dict.flatMap(dict => keywords.foldLeft(List[String
 
 
 //Test für Suche von nur "Verkehr"
-val str = dep_keywords_dict.map(dic => if(dic._2.contains("Verkehr")) dic._1 else "Not in list")
+val str = departments_dict.map(dic => if(dic._2.contains("Verkehr")) dic._1 else "Not in list")
 
 //zwischentest
 val testArr = List("erstes", "zweites", "erstes", "drittes")

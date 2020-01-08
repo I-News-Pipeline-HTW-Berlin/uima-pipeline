@@ -94,7 +94,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
     createEngineDescription(classOf[TfIdfCalculator],
       TfIdfCalculator.MODEL_PATH, "src/main/resources/idfmodel.json",
       TfIdfCalculator.N_MOST_DENOM, "35"),
-    createEngineDescription(classOf[JsonWriter])
+    createEngineDescription(classOf[JsonWriter],
+      JsonWriter.DEPARTMENTS_PATH, "src/main/resources/departments.json")
   ).iterator()
 
   def writeModel(): JCasIterator =

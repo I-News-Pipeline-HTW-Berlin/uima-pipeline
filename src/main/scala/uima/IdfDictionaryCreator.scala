@@ -26,8 +26,7 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   //val jsonString: String = deserialize[String](modelPath)
   var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
-                          .map(entry => (entry._1, (docCountOld/entry._2).toInt))
-
+                          .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2)))))
  // var termDfMap = Map.empty[String, Int]
 
   var docCountNew = 0

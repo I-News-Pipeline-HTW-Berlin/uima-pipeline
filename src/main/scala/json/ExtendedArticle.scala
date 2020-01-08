@@ -18,13 +18,15 @@ case class ExtendedArticle(val id: String,
                            val description: Any,
                            val lemmas: List[String],
                            val readingTime: Int,
-                           val mostRelevantLemmas: List[String]) {
+                           val mostRelevantLemmas: List[String],
+                           val departments: List[String]) {
   def lemmasAsJsStrings = lemmas.map(l => JsString(l)).toVector
   def mostRelevantLemmasAsJsStrings: Vector[JsString] = mostRelevantLemmas.map(mrl => JsString(mrl)).toVector
   def authorsAsJsStrings = authors.map(a => JsString(a)).toVector
   def linksAsJsStrings = links.map(l => JsString(l)).toVector
   def keywordsAsJsStrings = keywords.map(k => JsString(k)).toVector
   def imageLinksAsJsStrings = imageLinks.map(il => JsString(il)).toVector
+  def departmentsAsJsStrings = departments.map(dep => JsString(dep)).toVector
 
   //TODO toString muss erweitert werden
   override def toString: String = lemmas.reduceLeft((l1,l2) => l1+l2) + readingTime.toString
@@ -58,7 +60,8 @@ object ExtendedArticleJsonProtocol extends DefaultJsonProtocol{
       },
       "lemmas" -> JsArray(ea.lemmasAsJsStrings),
       "readingTime" -> JsNumber(ea.readingTime),
-      "mostRelevantLemmas" -> JsArray(ea.mostRelevantLemmasAsJsStrings)
+      "mostRelevantLemmas" -> JsArray(ea.mostRelevantLemmasAsJsStrings),
+      "departments" -> JsArray(ea.departmentsAsJsStrings)
     )
 
     override def read(json: JsValue): ExtendedArticle = ???

@@ -20,7 +20,8 @@ object JSONComposer {
               description: Any,
               lemmas: List[String],
               readingTime: Int,
-              mostRelevantLemmas: List[String]): String = {
+              mostRelevantLemmas: List[String],
+              departments: List[String]): String = {
 
     ExtendedArticle(
       id,
@@ -39,7 +40,8 @@ object JSONComposer {
       description,
       lemmas,
       readingTime,
-      mostRelevantLemmas).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
+      mostRelevantLemmas,
+      departments).toJson(ExtendedArticleJsonProtocol.ExtendedArticleJsonFormat).compactPrint
   }
 
 }
