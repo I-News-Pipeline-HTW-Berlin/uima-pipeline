@@ -6,12 +6,12 @@ import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
-import org.apache.uima.fit.factory.AnalysisEngineFactory
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
-import org.apache.uima.fit.util.LifeCycleUtil
+import de.tudarmstadt.ukp.dkpro.core.textnormalizer.annotations.TrailingCharacterRemover
+import de.tudarmstadt.ukp.dkpro.core.tokit.TokenTrimmer
 
 case class Corpus(reader: CollectionReaderDescription, readerForModel: CollectionReaderDescription) {
 
@@ -77,6 +77,13 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
       OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
       OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[TokenTrimmer],
+      TokenTrimmer.PARAM_PREFIXES, Array("\"", ".", "|", "“", "„", "-", "_", "—"),
+      TokenTrimmer.PARAM_SUFFIXES, Array()
+    ),
+    createEngineDescription(classOf[TrailingCharacterRemover],
+      TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
+      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,.:|_„-“^»*’()&/\"'©§'—«·=\\E0-9]+"),
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
     createEngineDescription(classOf[StopWordRemover],
@@ -108,6 +115,12 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+      createEngineDescription(classOf[TokenTrimmer],
+        TokenTrimmer.PARAM_PREFIXES, Array("\"", ".", "|", "“", "„", "-", "_", "—"),
+        TokenTrimmer.PARAM_SUFFIXES, Array()),
+      createEngineDescription(classOf[TrailingCharacterRemover],
+        TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
+        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,.:|_„-“^»*’()&/\"'©§'—«·=\\E0-9]+"),
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],

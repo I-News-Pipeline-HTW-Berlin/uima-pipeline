@@ -1,11 +1,9 @@
 package uima
 
 import db.DbConnector
-import de.tudarmstadt.ukp.dkpro.core.api.frequency.tfidf.`type`.Tfidf
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.util.JCasUtil
-import org.josql.parser.Token
 
 object App {
 
@@ -18,7 +16,7 @@ object App {
 
     //ZUM TESTEN, OB ES FUNZT BEI MEHRMALIGEN DURCHLAUF:
     val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "test_scraped_articles_sorted", "last_crawl_time.txt")
+      "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")
 
     //AUF INEWS SERVER LAUFEN LASSEN:
     /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
@@ -90,7 +88,7 @@ object App {
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
       val mongoClient = DbConnector.createClient("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de", "27020", "s0558059")
-      val collection = DbConnector.getCollectionFromDb("s0558059", "test_processed_articles", mongoClient)
+      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles_2", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)

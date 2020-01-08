@@ -1,18 +1,17 @@
 package db
 
+import java.io.File
+
 import db.Helpers._
 import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
 import json.JSONParser
 import org.apache.uima.cas.CAS
 import org.apache.uima.fit.component.CasCollectionReader_ImplBase
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import org.apache.uima.util.Progress
-import org.apache.uima.util.ProgressImpl
+import org.apache.uima.util.{Progress, ProgressImpl}
 import org.mongodb.scala.MongoClient
-import org.mongodb.scala.model.Filters
-import java.io.{File, PrintWriter}
-
 import org.mongodb.scala.bson.BsonDateTime
+import org.mongodb.scala.model.Filters
 
 import scala.io.Source
 //muss noch umbenannt werden
@@ -42,7 +41,7 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
     val db = "s0558059" //eig: inews
 
     @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
-    val collectionName = "test_scraped_articles_sorted"
+    val collectionName = "scraped_articles"
     //bisher: val collectionName = "scraped_articles"
 
     @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
@@ -107,7 +106,7 @@ object JSONReaderDbForFirstPipeline {
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
   final val DB = "s0558059" //inews
-  final val COLLECTION_NAME = "test_scraped_articles_sorted" //bisher: "scraped_articles"
+  final val COLLECTION_NAME = "scraped_articles" //bisher: "scraped_articles"
   final val FILE_LOCATION = "last_crawl_time.txt"
 }
 
