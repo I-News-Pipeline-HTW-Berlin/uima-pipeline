@@ -43,8 +43,8 @@ object ExtendedArticleJsonProtocol extends DefaultJsonProtocol{
       "newsSite" -> JsString(ea.newsSite),
       "links" -> JsArray(ea.linksAsJsStrings),
       ea.publishedTime match {
-        case pt: BigDecimal => "published_time" -> JsObject(Map("$date" -> JsNumber(pt)))
-        case _ => "published_time" -> JsNull //JsObject(Map("$date" -> JsNull))
+        case pt: BigDecimal => "publishedTime" -> JsObject(Map("$date" -> JsNumber(pt)))
+        case _ => "publishedTime" -> JsNull
       },
       "keywords" -> JsArray(ea.keywordsAsJsStrings),
       "longUrl" -> JsString(ea.longUrl),
