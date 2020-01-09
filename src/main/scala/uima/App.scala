@@ -60,6 +60,20 @@ object App {
       println()
     })*/
 
+    // vor push auskommentieren
+
+    val modelIt = corpus.writeModel()
+    modelIt.forEachRemaining(jcas => {
+      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      println("Text: "+jcas.getDocumentText)
+      println()
+      println("most relevant in this article:")
+      lemmas.forEach(l => println(l.getValue))
+      println()
+    })
+
+    //vor push wieder einkommentieren
+/*
     /**
      * erste Pipeline (mit IDF):
      */
@@ -95,16 +109,6 @@ object App {
     } else {
       //TODO things like that should be written to log file
       println("Currently no documents to analyze. ")
-    }
-
-
-    //val collection = DbConnector.getCollectionFromDb()
-    //collection.find().first().printHeadResult()
-    /*val results = collection.find().toFuture()
-    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-    results.foreach(res => println(res.toString()))*/
-
-
-
+    } */
   }
 }

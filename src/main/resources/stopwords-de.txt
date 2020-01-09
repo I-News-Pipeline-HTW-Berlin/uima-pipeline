@@ -46,6 +46,7 @@ beide
 beiden
 beim
 beispiel
+beispielsweise
 bekannt
 bereits
 besonders
@@ -137,7 +138,9 @@ dieses
 dir
 doch
 dort
+dorthin
 drei
+dreimal
 drin
 dritte
 dritten
@@ -392,6 +395,9 @@ n
 na
 nach
 nachdem
+nächst
+nächste
+nächster
 nahm
 natürlich
 neben
@@ -457,6 +463,7 @@ seiner
 seines
 seit
 seitdem
+seither
 selbst
 sich
 sie
