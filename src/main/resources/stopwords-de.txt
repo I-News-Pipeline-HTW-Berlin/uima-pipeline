@@ -10,6 +10,7 @@ achter
 achtes
 ag
 alle
+alldem
 allein
 allem
 allen
@@ -21,6 +22,7 @@ als
 also
 am
 an
+and
 ander
 andere
 anderem
@@ -103,11 +105,13 @@ dementsprechend
 demgegenüber
 demgemäss
 demgemäß
+demnach
 demselben
 demzufolge
 den
 denen
 denn
+dennoch
 denselben
 der
 deren
@@ -123,6 +127,7 @@ deshalb
 desselben
 dessen
 deswegen
+di
 dich
 die
 diejenige
@@ -202,6 +207,7 @@ euren
 eurer
 eures
 f
+fast
 folgende
 früher
 fünf
@@ -210,6 +216,7 @@ fünften
 fünfter
 fünftes
 für
+fürs
 g
 gab
 ganz
@@ -288,8 +295,10 @@ ihrer
 ihres
 im
 immer
+immerhin
 in
 indem
+indes
 infolgedessen
 ins
 irgend
@@ -345,6 +354,7 @@ lang
 lange
 leicht
 leide
+letztendlich
 lieber
 los
 m
@@ -474,6 +484,7 @@ siebenter
 siebentes
 sind
 so
+sogar
 solang
 solche
 solchem
@@ -486,10 +497,12 @@ sollst
 sollt
 sollte
 sollten
+somit
 sondern
 sonst
 soweit
 sowie
+sowohl
 später
 startseite
 statt
@@ -508,6 +521,7 @@ tun
 u
 uhr
 um
+ums
 und
 und?
 uns
@@ -536,6 +550,7 @@ von
 vor
 w
 wahr?
+wahrlich
 wann
 war
 waren
@@ -543,6 +558,7 @@ warst
 wart
 warum
 was
+weder
 weg
 wegen
 weil
@@ -594,7 +610,9 @@ wurden
 während
 währenddem
 währenddessen
+wär
 wäre
+wären
 würde
 würden
 x
@@ -608,8 +626,10 @@ zehnter
 zehntes
 zeit
 zu
+zudem
 zuerst
 zugleich
+zuletzt
 zum
 zunächst
 zur

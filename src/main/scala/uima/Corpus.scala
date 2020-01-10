@@ -4,6 +4,7 @@ import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
@@ -19,6 +20,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
   val SEGMENTER_DE_TOKEN_MODEL = "src/main/resources/de-token.bin"
   val SEGMENTER_DE_SENTENCE_MODEL = "src/main/resources/de-sent.bin"
+  val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
@@ -78,11 +80,11 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
       OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[TokenTrimmer],
-      TokenTrimmer.PARAM_PREFIXES, Array("\"", ".", "|", "“", "„", "-", "_", "—"),
+      TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
       TokenTrimmer.PARAM_SUFFIXES, Array()),
     createEngineDescription(classOf[TrailingCharacterRemover],
       TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,.:|_„-“^»*’()&/\"'©§'—«·=\\E0-9]+"),
+      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
     createEngineDescription(classOf[StopWordRemover],
@@ -115,11 +117,14 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
       createEngineDescription(classOf[TokenTrimmer],
-        TokenTrimmer.PARAM_PREFIXES, Array("\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?"),
+        TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
         TokenTrimmer.PARAM_SUFFIXES, Array()),
       createEngineDescription(classOf[TrailingCharacterRemover],
         TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–?“^»*’()&/\"'©§'—«·=\\E0-9]+"),
+        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+      createEngineDescription(classOf[StanfordNamedEntityRecognizer],
+        StanfordNamedEntityRecognizer.PARAM_LANGUAGE, "de",
+        StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],

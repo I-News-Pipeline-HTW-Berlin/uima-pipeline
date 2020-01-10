@@ -2,6 +2,7 @@ package uima
 
 import db.DbConnector
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
+import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.util.JCasUtil
 
@@ -64,12 +65,17 @@ object App {
 
     val modelIt = corpus.writeModel()
     modelIt.forEachRemaining(jcas => {
-      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      /*val lemmas = JCasUtil.select(jcas, classOf[Lemma])
       println("Text: "+jcas.getDocumentText)
       println()
       println("most relevant in this article:")
       lemmas.forEach(l => println(l.getValue))
+      println()*/
+      val nes = JCasUtil.select(jcas, classOf[NamedEntity])
+      println("Text: "+jcas.getDocumentText)
       println()
+      println("NamedEntitys in this article: ")
+      nes.forEach(ne => println(ne))
     })
 
     //vor push wieder einkommentieren

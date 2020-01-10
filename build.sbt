@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.frequency-asl" % "1.10.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.textnormalizer-asl" % "1.10.0",
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.tokit-asl" % "1.10.0",
+  "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.stanfordnlp-gpl" % "1.10.0",
 
   /* UIMA */
   "org.apache.uima" % "uimaj-as-activemq" % "2.10.3",
