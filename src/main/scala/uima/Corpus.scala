@@ -2,8 +2,9 @@ package uima
 
 import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
+import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
-import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
+import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpNamedEntityRecognizer, OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
@@ -20,7 +21,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
   val SEGMENTER_DE_TOKEN_MODEL = "src/main/resources/de-token.bin"
   val SEGMENTER_DE_SENTENCE_MODEL = "src/main/resources/de-sent.bin"
-  val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
+  //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
+  val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
@@ -122,9 +124,20 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       createEngineDescription(classOf[TrailingCharacterRemover],
         TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
         TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
-      createEngineDescription(classOf[StanfordNamedEntityRecognizer],
+
+      //findet viel, aber ist nur teilweise korrekt
+      /*createEngineDescription(classOf[StanfordNamedEntityRecognizer],
         StanfordNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),
+        StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
+
+      // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
+      /*createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de")*/
+
+      // findet insgesamt nur sehr wenige named entities, daher nicht so gut
+      createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],
+        OpenNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
+        OpenNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],
