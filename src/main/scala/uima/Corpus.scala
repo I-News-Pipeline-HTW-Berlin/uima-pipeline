@@ -23,7 +23,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
   //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
   //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1/de/tudarmstadt/ukp/dkpro/core/stanfordnlp/lib/ner-de-germeval2014.hgc_175m_600.crf.properties"
-  val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1"
+  //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
@@ -94,8 +94,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
     createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-      CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION),
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"/*,
+      CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
     createEngineDescription(classOf[StopWordRemover],
       StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
@@ -140,8 +140,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
       // in zusammenarbeit mit dem mapper am besten
       createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION),
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"/*,
+        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
       createEngineDescription(classOf[NamedEntityMapper]),
 
       // findet insgesamt nur sehr wenige named entities, daher nicht so gut
