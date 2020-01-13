@@ -30,7 +30,6 @@ object DepartmentMapping {
           jsonString += linesIt.next()
         }
         try {
-          println(jsonString)
           return JSONParser.parseDepartmentKeywordsMapping(jsonString)
         }
         Map.empty[String, List[String]]

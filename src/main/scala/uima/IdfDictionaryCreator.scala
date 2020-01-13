@@ -9,6 +9,7 @@ import org.apache.uima.fit.util.{JCasUtil, LifeCycleUtil}
 import org.apache.uima.jcas.JCas
 import spray.json._
 import DefaultJsonProtocol._
+import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import json.JSONParser
 import org.apache.uima.fit.descriptor.ConfigurationParameter
 import org.apache.uima.fit.factory.AnalysisEngineFactory
@@ -47,9 +48,30 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
    */
   override def process(aJCas: JCas): Unit = {
     docCountNew+=1
-    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList
+    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList.asInstanceOf[List[Lemma]]
+    val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
+    val namedEntities = JCasUtil.select(namedEntitiesView, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]
+    val docText = aJCas.getDocumentText
+
+    //hier werden lemmas wie "Elon" und "Musk" ersetzt durch "Elon Musk"
+    // erstmal nur für personen, TODO: überlegen, was und ob wir mit den restlichen namedEntities machen
+    val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
+        val neWithEqualIndex = namedEntities.filter(
+          ne => ne.getValue.equalsIgnoreCase("person") && (ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd))
+        if(!neWithEqualIndex.isEmpty && lemma.getBegin == neWithEqualIndex.head.getBegin){
+          val newLem = new Lemma(aJCas, neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd)
+          newLem.setValue(docText.substring(neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd))
+          newLem::list
+        } else if(!neWithEqualIndex.isEmpty && lemma.getEnd == neWithEqualIndex.head.getEnd) {
+          list
+        }
+        else {
+          lemma::list
+        }
+    })
+
     //df
-    termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
+    termDfMap = lemmasWithNamedEntities.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0L)+1L))
    /* println("content of size view: "+aJCas.getView("SIZE_VIEW").getDocumentText)

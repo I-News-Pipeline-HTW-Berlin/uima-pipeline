@@ -5,7 +5,6 @@ import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpNamedEntityRecognizer, OpenNlpPosTagger, OpenNlpSegmenter}
-import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
@@ -87,8 +86,13 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
     createEngineDescription(classOf[TrailingCharacterRemover],
       TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
       TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[NamedEntityMapper]),
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
+    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[StopWordRemover],
       StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
@@ -126,18 +130,20 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
 
       //findet viel, aber ist nur teilweise korrekt
-      /*createEngineDescription(classOf[StanfordNamedEntityRecognizer],
+     /* createEngineDescription(classOf[StanfordNamedEntityRecognizer],
         StanfordNamedEntityRecognizer.PARAM_LANGUAGE, "de",
         StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
 
       // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
-      /*createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de")*/
+      // in zusammenarbeit mit dem mapper am besten
+      createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
+      createEngineDescription(classOf[NamedEntityMapper]),
 
       // findet insgesamt nur sehr wenige named entities, daher nicht so gut
-      createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],
+      /*createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],
         OpenNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        OpenNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),
+        OpenNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],
@@ -190,12 +196,12 @@ object Corpus {
       JSONReaderDB.FILE_LOCATION, fileLocation),
       createReaderDescription(
       classOf[JSONReaderDbForFirstPipeline],
-        JSONReaderDbForFirstPipeline.USER_NAME, userName,
-        JSONReaderDbForFirstPipeline.PW, pw,
-        JSONReaderDbForFirstPipeline.SERVER_ADDRESS, serverAddress,
-        JSONReaderDbForFirstPipeline.PORT, port,
-        JSONReaderDbForFirstPipeline.DB, db,
-        JSONReaderDbForFirstPipeline.COLLECTION_NAME, collectionName,
-        JSONReaderDbForFirstPipeline.FILE_LOCATION, fileLocation))
+      JSONReaderDbForFirstPipeline.USER_NAME, userName,
+      JSONReaderDbForFirstPipeline.PW, pw,
+      JSONReaderDbForFirstPipeline.SERVER_ADDRESS, serverAddress,
+      JSONReaderDbForFirstPipeline.PORT, port,
+      JSONReaderDbForFirstPipeline.DB, db,
+      JSONReaderDbForFirstPipeline.COLLECTION_NAME, collectionName,
+      JSONReaderDbForFirstPipeline.FILE_LOCATION, fileLocation))
   }
 }

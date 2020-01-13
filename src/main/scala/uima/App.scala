@@ -17,7 +17,7 @@ object App {
 
     //ZUM TESTEN, OB ES FUNZT BEI MEHRMALIGEN DURCHLAUF:
     val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")
+      "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")
 
     //AUF INEWS SERVER LAUFEN LASSEN:
     /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
@@ -63,23 +63,23 @@ object App {
 
     // vor push auskommentieren
 
-    val modelIt = corpus.writeModel()
+   /* val modelIt = corpus.writeModel()
     modelIt.forEachRemaining(jcas => {
-      /*val lemmas = JCasUtil.select(jcas, classOf[Lemma])
+      val lemmas = JCasUtil.select(jcas, classOf[Lemma])
       println("Text: "+jcas.getDocumentText)
       println()
       println("most relevant in this article:")
       lemmas.forEach(l => println(l.getValue))
-      println()*/
+      println()
       val nes = JCasUtil.select(jcas, classOf[NamedEntity])
       println("Text: "+jcas.getDocumentText)
       println()
       println("NamedEntitys in this article: ")
       nes.forEach(ne => println(ne))
-    })
+    })*/
 
     //vor push wieder einkommentieren
-/*
+
     /**
      * erste Pipeline (mit IDF):
      */
@@ -108,13 +108,13 @@ object App {
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
       val mongoClient = DbConnector.createClient("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de", "27020", "s0558059")
-      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles_2", mongoClient)
+      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles_test", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)
     } else {
       //TODO things like that should be written to log file
       println("Currently no documents to analyze. ")
-    } */
+    }
   }
 }
