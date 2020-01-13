@@ -6,6 +6,8 @@ scalaVersion := "2.13.1"
 
 //scalaVersion := "2.12"
 
+resolvers += "ukp-oss-model-releases" at "http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-model-releases-local"
+
 libraryDependencies ++= Seq(
   /* DKPro core components */
   "de.tudarmstadt.ukp.dkpro.core" % "de.tudarmstadt.ukp.dkpro.core.clearnlp-asl" % "1.10.0",
