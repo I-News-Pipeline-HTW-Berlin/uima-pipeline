@@ -1,18 +1,17 @@
 package db
 
+import java.io.File
+
 import db.Helpers._
 import de.tudarmstadt.ukp.dkpro.core.api.parameter.ComponentParameters
 import json.JSONParser
 import org.apache.uima.cas.CAS
 import org.apache.uima.fit.component.CasCollectionReader_ImplBase
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import org.apache.uima.util.Progress
-import org.apache.uima.util.ProgressImpl
+import org.apache.uima.util.{Progress, ProgressImpl}
 import org.mongodb.scala.MongoClient
-import org.mongodb.scala.model.Filters
-import java.io.{File, PrintWriter}
-
 import org.mongodb.scala.bson.BsonDateTime
+import org.mongodb.scala.model.Filters
 
 import scala.io.Source
 //muss noch umbenannt werden
@@ -22,30 +21,30 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
     /**
      * Name of configuration parameter that contains the character encoding used by the input files.
      */
-    @ConfigurationParameter(name = JSONReaderDB.PARAM_SOURCE_ENCODING, mandatory = true,
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PARAM_SOURCE_ENCODING, mandatory = true,
       defaultValue = Array(ComponentParameters.DEFAULT_ENCODING))
     val sourceEncoding = ""
 
-    @ConfigurationParameter(name = JSONReaderDB.USER_NAME)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.USER_NAME)
     val userName = "s0558059" //eig: inews
 
-    @ConfigurationParameter(name = JSONReaderDB.PW)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PW)
     val pw = "f0r313g" //eig: pr3cipit4t3s
 
-    @ConfigurationParameter(name = JSONReaderDB.SERVER_ADDRESS)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.SERVER_ADDRESS)
     val serverAddress = "hadoop05.f4.htw-berlin.de"
 
-    @ConfigurationParameter(name = JSONReaderDB.PORT)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PORT)
     val port = "27020"
 
-    @ConfigurationParameter(name = JSONReaderDB.DB)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.DB)
     val db = "s0558059" //eig: inews
 
-    @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
-    val collectionName = "test_scraped_articles_sorted"
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.COLLECTION_NAME)
+    val collectionName = "scraped_articles_test"
     //bisher: val collectionName = "scraped_articles"
 
-    @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
+    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.FILE_LOCATION)
     val fileLocation = "last_crawl_time.txt"
 
     //val DATE_FORMAT = "EEE, MMM dd, yyyy h:mm a"
@@ -107,7 +106,7 @@ object JSONReaderDbForFirstPipeline {
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
   final val DB = "s0558059" //inews
-  final val COLLECTION_NAME = "test_scraped_articles_sorted" //bisher: "scraped_articles"
+  final val COLLECTION_NAME = "scraped_articles_test" //bisher: "scraped_articles"
   final val FILE_LOCATION = "last_crawl_time.txt"
 }
 

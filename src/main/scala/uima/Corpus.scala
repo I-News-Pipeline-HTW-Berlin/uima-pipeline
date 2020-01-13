@@ -2,16 +2,17 @@ package uima
 
 import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
+import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
-import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
+import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpNamedEntityRecognizer, OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
-import org.apache.uima.fit.factory.AnalysisEngineFactory
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
-import org.apache.uima.fit.util.LifeCycleUtil
+import de.tudarmstadt.ukp.dkpro.core.textnormalizer.annotations.TrailingCharacterRemover
+import de.tudarmstadt.ukp.dkpro.core.tokit.TokenTrimmer
 
 case class Corpus(reader: CollectionReaderDescription, readerForModel: CollectionReaderDescription) {
 
@@ -19,6 +20,8 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   val POS_TAGGER_DE_MODEL = "src/main/resources/de-pos-maxent.bin"
   val SEGMENTER_DE_TOKEN_MODEL = "src/main/resources/de-token.bin"
   val SEGMENTER_DE_SENTENCE_MODEL = "src/main/resources/de-sent.bin"
+  //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
+  val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
 
   def tokenize(): JCasIterator =
     iteratePipeline(
@@ -77,8 +80,19 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
       OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
       OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[TokenTrimmer],
+      TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
+      TokenTrimmer.PARAM_SUFFIXES, Array()),
+    createEngineDescription(classOf[TrailingCharacterRemover],
+      TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
+      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
+    createEngineDescription(classOf[NamedEntityMapper]),
     createEngineDescription(classOf[ReadingTimeEstimator],
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0"),
+    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
     createEngineDescription(classOf[StopWordRemover],
       StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
@@ -108,6 +122,28 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
+      createEngineDescription(classOf[TokenTrimmer],
+        TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
+        TokenTrimmer.PARAM_SUFFIXES, Array()),
+      createEngineDescription(classOf[TrailingCharacterRemover],
+        TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
+        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+
+      //findet viel, aber ist nur teilweise korrekt
+     /* createEngineDescription(classOf[StanfordNamedEntityRecognizer],
+        StanfordNamedEntityRecognizer.PARAM_LANGUAGE, "de",
+        StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
+
+      // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
+      // in zusammenarbeit mit dem mapper am besten
+      createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de"),
+      createEngineDescription(classOf[NamedEntityMapper]),
+
+      // findet insgesamt nur sehr wenige named entities, daher nicht so gut
+      /*createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],
+        OpenNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
+        OpenNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],
@@ -116,11 +152,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       createEngineDescription(classOf[IxaLemmatizer],
         IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.ixa-model-lemmatizer-de-perceptron-conll09:20160213.1",
         IxaLemmatizer.PARAM_LANGUAGE, "de"),
-      /*  createEngineDescription(classOf[TfIdfWriter],
-          TfIdfWriter.PARAM_FEATURE_PATH, "Lemma/de/tudarmstadt/ukp/dkpro/core/api/segementation/type",//"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Lemma",
-          TfIdfWriter.PARAM_LOWERCASE, true,
-          TfIdfWriter.PARAM_TARGET_LOCATION, "src/main/resources/dfmodel.model"))
-          */
+
       createEngineDescription(classOf[IdfDictionaryCreator],
         IdfDictionaryCreator.MODEL_PATH, "src/main/resources/idfmodel.json")
     ).iterator()
@@ -164,12 +196,12 @@ object Corpus {
       JSONReaderDB.FILE_LOCATION, fileLocation),
       createReaderDescription(
       classOf[JSONReaderDbForFirstPipeline],
-        JSONReaderDbForFirstPipeline.USER_NAME, userName,
-        JSONReaderDbForFirstPipeline.PW, pw,
-        JSONReaderDbForFirstPipeline.SERVER_ADDRESS, serverAddress,
-        JSONReaderDbForFirstPipeline.PORT, port,
-        JSONReaderDbForFirstPipeline.DB, db,
-        JSONReaderDbForFirstPipeline.COLLECTION_NAME, collectionName,
-        JSONReaderDbForFirstPipeline.FILE_LOCATION, fileLocation))
+      JSONReaderDbForFirstPipeline.USER_NAME, userName,
+      JSONReaderDbForFirstPipeline.PW, pw,
+      JSONReaderDbForFirstPipeline.SERVER_ADDRESS, serverAddress,
+      JSONReaderDbForFirstPipeline.PORT, port,
+      JSONReaderDbForFirstPipeline.DB, db,
+      JSONReaderDbForFirstPipeline.COLLECTION_NAME, collectionName,
+      JSONReaderDbForFirstPipeline.FILE_LOCATION, fileLocation))
   }
 }
