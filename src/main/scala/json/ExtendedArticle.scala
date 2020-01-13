@@ -28,7 +28,7 @@ case class ExtendedArticle(val id: String,
   def imageLinksAsJsStrings = imageLinks.map(il => JsString(il)).toVector
   def departmentsAsJsStrings = departments.map(dep => JsString(dep)).toVector
 
-  //TODO toString muss erweitert werden
+  //TODO toString muss erweitert werden.
   override def toString: String = lemmas.reduceLeft((l1,l2) => l1+l2) + readingTime.toString
 }
 

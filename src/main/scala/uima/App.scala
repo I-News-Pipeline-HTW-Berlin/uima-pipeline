@@ -16,12 +16,12 @@ object App {
       "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")*/
 
     //ZUM TESTEN, OB ES FUNZT BEI MEHRMALIGEN DURCHLAUF:
-    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")
+   /* val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")*/
 
     //AUF INEWS SERVER LAUFEN LASSEN:
-    /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
-      "27020", "inews", "scraped_articles", "last_crawl_time.txt")*/
+    val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
+      "27020", "inews", "scraped_articles", "last_crawl_time.txt")
 
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
@@ -94,11 +94,11 @@ object App {
     /**
      * 2. Pipeline (mit TF-IDF):
      */
-    val testPipeIt = corpus.testPipeline()
+    val mainPipeIt = corpus.mainPipeline()
     //val mc : MongoCollection[Document] = new MongoCollection[Document]()
     //TODO make it nice
     var jsonList : IndexedSeq[String] = IndexedSeq.empty
-    testPipeIt.forEachRemaining(jcas => {
+    mainPipeIt.forEachRemaining(jcas => {
       val json =JCasUtil.select(jcas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue
       //jsonList.foldLeft(List.empty)((l, j) => l:+j)
       //jsonList = json::jsonList
@@ -107,8 +107,8 @@ object App {
     //println("Länge der Liste: "+ jsonList.size)
     //Exception abfangen, falls Liste empty
     if(!jsonList.isEmpty){
-      val mongoClient = DbConnector.createClient("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de", "27020", "s0558059")
-      val collection = DbConnector.getCollectionFromDb("s0558059", "processed_articles_test", mongoClient)
+      val mongoClient = DbConnector.createClient("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de", "27020", "inews")
+      val collection = DbConnector.getCollectionFromDb("inews", "processed_articles", mongoClient)
       //jsonList.map(doc => collection.insertOne(Document(doc)))
 
       DbConnector.writeMultipleDocumentsToCollection(collection, jsonList)

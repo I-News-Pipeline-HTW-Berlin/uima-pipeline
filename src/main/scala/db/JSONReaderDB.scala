@@ -26,10 +26,10 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val sourceEncoding = ""
 
   @ConfigurationParameter(name = JSONReaderDB.USER_NAME)
-  val userName = "s0558059" //eig: inews
+  val userName = "inews" //test: s0558059
 
   @ConfigurationParameter(name = JSONReaderDB.PW)
-  val pw = "f0r313g" //eig: pr3cipit4t3s
+  val pw = "pr3cipit4t3s" //test: f0r313g
 
   @ConfigurationParameter(name = JSONReaderDB.SERVER_ADDRESS)
   val serverAddress = "hadoop05.f4.htw-berlin.de"
@@ -38,11 +38,10 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val port = "27020"
 
   @ConfigurationParameter(name = JSONReaderDB.DB)
-  val db = "s0558059" //eig: inews
+  val db = "inews" //test: s0558059
 
   @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
-  val collectionName = "scraped_articles_test" //für test
-  //bisher: val collectionName = "scraped_articles"
+  val collectionName = "scraped_articles" //für test scraped_articles_test
 
   @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
   val fileLocation = "last_crawl_time.txt"
@@ -109,11 +108,11 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
 object JSONReaderDB {
   final val PARAM_SOURCE_ENCODING = ComponentParameters.PARAM_SOURCE_ENCODING
   final val ENCODING_AUTO = "auto"
-  final val USER_NAME = "s0558059" //inews
-  final val PW = "f0r313g" //pr3cipit4t3s
+  final val USER_NAME = "inews" // s0558059
+  final val PW = "pr3cipit4t3s" // f0r313g
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
-  final val DB = "s0558059" //inews
-  final val COLLECTION_NAME = "scraped_articles_test" //eigentlich: final val COLLECTION_NAME = "scraped_articles"
+  final val DB = "inews" // s0558059
+  final val COLLECTION_NAME = "scraped_articles" //scraped_articles_test
   final val FILE_LOCATION = "last_crawl_time.txt"
 }

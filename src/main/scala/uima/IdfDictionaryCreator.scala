@@ -5,14 +5,13 @@ import java.io._
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.commons.io.FileUtils
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
-import org.apache.uima.fit.util.{JCasUtil, LifeCycleUtil}
+import org.apache.uima.fit.util.{JCasUtil}
 import org.apache.uima.jcas.JCas
 import spray.json._
 import DefaultJsonProtocol._
 import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import json.JSONParser
 import org.apache.uima.fit.descriptor.ConfigurationParameter
-import org.apache.uima.fit.factory.AnalysisEngineFactory
 
 
 class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
@@ -25,20 +24,11 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   val oldModel = deserialize(modelPath)
   val docCountOld = oldModel.getOrElse("$docCount$", 0.0)
 
-  //val jsonString: String = deserialize[String](modelPath)
   var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
                           .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2))).toLong))
 
-
- // var termDfMap = Map.empty[String, Int]
-
   var docCountNew = 0
 
-  /*override def initialize(context: UimaContext): Unit = {
-    super.initialize(context)
-    //val dfStore = new DfStore(())
-
-  }*/
 
   /**
    * 1. step in calculating TF-IDF:
@@ -74,12 +64,6 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     termDfMap = lemmasWithNamedEntities.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0L)+1L))
-   /* println("content of size view: "+aJCas.getView("SIZE_VIEW").getDocumentText)
-    if(docCount >= aJCas.getView("SIZE_VIEW").getDocumentText.toInt){
-      println("now please end process")
-      val desc = AnalysisEngineFactory.createEngineDescription(this.getClass)
-      LifeCycleUtil.collectionProcessComplete(AnalysisEngineFactory.createEngine(desc))
-    }*/
   }
 
   @SuppressWarnings(Array("unchecked"))
@@ -124,9 +108,6 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     val docCountBoth = docCountOld+docCountNew
     val termIdfMap = termDfMap.view.mapValues(df => scala.math.log(docCountBoth/df.toDouble)).toMap + ("$docCount$" -> docCountBoth)
     val json = termIdfMap.toJson.compactPrint
-   /* println("Size of map: "+termIdfMap.size)
-    println(termIdfMap)
-    println(json)*/
     serialize(json, modelPath)
   }
 }

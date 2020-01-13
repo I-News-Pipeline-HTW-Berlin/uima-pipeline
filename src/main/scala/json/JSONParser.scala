@@ -1,11 +1,8 @@
 package json
 
-import java.text.SimpleDateFormat
-
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase.Resource
 import spray.json._
 import DefaultJsonProtocol._
-
 import scala.io.Source
 
 object JSONParser {

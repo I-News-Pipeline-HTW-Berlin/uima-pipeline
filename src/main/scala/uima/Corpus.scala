@@ -4,7 +4,7 @@ import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
-import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpNamedEntityRecognizer, OpenNlpPosTagger, OpenNlpSegmenter}
+import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
 import org.apache.uima.collection.CollectionReaderDescription
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
@@ -74,7 +74,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       ReadingTimeEstimator.WORDS_PER_MINUTE, "200.0")
   ).iterator()
 
-  def testPipeline(): JCasIterator = iteratePipeline(
+  def mainPipeline(): JCasIterator = iteratePipeline(
     reader,
     createEngineDescription(classOf[OpenNlpSegmenter],
       OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,

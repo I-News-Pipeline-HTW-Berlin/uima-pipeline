@@ -1,10 +1,7 @@
 package departmentsMapping
 
-import java.io.{File, FileInputStream, IOException, ObjectInputStream}
-
+import java.io.{File, IOException}
 import json.JSONParser
-import spray.json.JsValue
-
 import scala.io.Source
 
 object DepartmentMapping {
