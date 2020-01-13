@@ -140,7 +140,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       // in zusammenarbeit mit dem mapper am besten
       createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
         CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION),
+        CoreNlpNamedEntityRecognizer.PARAM_MODEL_ARTIFACT_URI, "mvn:de.tudarmstadt.ukp.dkpro.core:de.tudarmstadt.ukp.dkpro.core.stanfordnlp-upstream-ner-de-germeval2014.hgc_175m_600.crf:20180227"),
       createEngineDescription(classOf[NamedEntityMapper]),
 
       // findet insgesamt nur sehr wenige named entities, daher nicht so gut
