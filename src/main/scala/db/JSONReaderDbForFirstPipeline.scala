@@ -11,7 +11,7 @@ import org.apache.uima.fit.descriptor.ConfigurationParameter
 import org.apache.uima.util.{Progress, ProgressImpl}
 import org.mongodb.scala.MongoClient
 import org.mongodb.scala.bson.BsonDateTime
-import org.mongodb.scala.model.Filters
+import org.mongodb.scala.model.{Filters, Sorts}
 
 import scala.io.Source
 //muss noch umbenannt werden
@@ -52,7 +52,7 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
     val lastCrawlTime = getLastCrawlTime
     val docs = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
       .find(Filters.and(Filters.gt("crawl_time", lastCrawlTime), Filters.ne("text", ""),
-        Filters.ne("title", null))).results()
+        Filters.ne("title", null))).sort(Sorts.ascending("crawl_time")).limit(2000).results()
     println(docs.size)
     val it = docs.iterator
     var latestCrawlTime = lastCrawlTime.asDateTime().getValue

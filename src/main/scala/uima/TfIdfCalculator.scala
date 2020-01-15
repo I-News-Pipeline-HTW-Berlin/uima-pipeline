@@ -37,7 +37,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
     // erstmal nur für personen, TODO: überlegen, was und ob wir mit den restlichen namedEntities machen
     val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
       val neWithEqualIndex = namedEntities.filter(
-        ne => ne.getValue.equalsIgnoreCase("person") && (ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd))
+        ne => ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd)
       if(!neWithEqualIndex.isEmpty && lemma.getBegin == neWithEqualIndex.head.getBegin){
         val newLem = new Lemma(aJCas, neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd)
         newLem.setValue(docText.substring(neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd).toLowerCase)

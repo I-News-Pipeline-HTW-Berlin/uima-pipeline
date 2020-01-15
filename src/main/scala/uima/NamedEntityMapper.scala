@@ -10,7 +10,8 @@ class NamedEntityMapper extends JCasAnnotator_ImplBase{
   override def process(aJCas: JCas): Unit = {
     aJCas.createView("NAMED_ENTITIES_VIEW")
     val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
-    val namedEntities = JCasUtil.select(aJCas, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]//.filter(ne => !ne.getValue.equals("0"))
+    //hier werden alle nicht personen rausgefiltert
+    val namedEntities = JCasUtil.select(aJCas, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]].filter(ne => ne.getValue.equals("person"))
     val namedEntitiesWithFullNames = namedEntities.foldLeft(List.empty[NamedEntity])((l, ne) => {
       if((!l.isEmpty) && ((l.head.getEnd + 1) == ne.getBegin) && l.head.getValue.equals(ne.getValue)){
         val newNe = new NamedEntity(namedEntitiesView, l.head.getBegin, ne.getEnd)
