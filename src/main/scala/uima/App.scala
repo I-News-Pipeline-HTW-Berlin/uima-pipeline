@@ -2,7 +2,6 @@ package uima
 
 import db.DbConnector
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
-import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.util.JCasUtil
 
@@ -21,7 +20,7 @@ object App {
 
     //AUF INEWS SERVER LAUFEN LASSEN:
     val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
-      "27020", "inews", "scraped_articles", "last_crawl_time.txt")
+      "27020", "inews", "scraped_1", "last_crawl_time.txt")
 
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()

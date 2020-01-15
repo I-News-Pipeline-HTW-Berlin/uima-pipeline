@@ -41,7 +41,7 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val db = "inews" //test: s0558059
 
   @ConfigurationParameter(name = JSONReaderDB.COLLECTION_NAME)
-  val collectionName = "scraped_articles" //für test scraped_articles_test
+  val collectionName = "scraped_1" //für test scraped_articles_test
 
   @ConfigurationParameter(name = JSONReaderDB.FILE_LOCATION)
   val fileLocation = "last_crawl_time.txt"
@@ -113,6 +113,6 @@ object JSONReaderDB {
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
   final val DB = "inews" // s0558059
-  final val COLLECTION_NAME = "scraped_articles" //scraped_articles_test
+  final val COLLECTION_NAME = "scraped_1" //scraped_articles_test
   final val FILE_LOCATION = "last_crawl_time.txt"
 }
