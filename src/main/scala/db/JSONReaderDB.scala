@@ -52,7 +52,7 @@ class JSONReaderDB extends CasCollectionReader_ImplBase {
   val lastCrawlTime = getLastCrawlTime
   val docs = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
     .find(Filters.and(Filters.gt("crawl_time", lastCrawlTime), Filters.ne("text", ""),
-      Filters.ne("title", null))).sort(Sorts.ascending("crawl_time")).limit(2000).results()
+      Filters.ne("title", null))).sort(Sorts.ascending("crawl_time")).limit(1500).results()
   println(docs.size)
   val it = docs.iterator
   var latestCrawlTime = lastCrawlTime.asDateTime().getValue
