@@ -34,7 +34,7 @@ object DbConnector {
     val doc = Document(docJsonString)
     collection.insertOne(doc).subscribe(new Observer[Completed] {
       override def onNext(result: Completed): Unit = {}
-      override def onError(e: Throwable): Unit = print(e.getStackTrace)
+      override def onError(e: Throwable): Unit = e.printStackTrace()
       override def onComplete(): Unit = {}
     })
   }
