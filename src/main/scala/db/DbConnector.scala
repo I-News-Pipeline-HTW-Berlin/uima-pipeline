@@ -25,12 +25,17 @@ object DbConnector {
   }
 
   def writeSingleDocumentToCollection(collection: MongoCollection[Document],
-                                      docJsonString: String) = {
+                                      docJsonString: String): Unit = {
+    /*val doc = docJsonString match {
+      case null => Document(BsonDocument())
+      case _ => Document(BsonDocument(docJsonString))
+    }*/
+    //TODO verschönern
     val doc = Document(docJsonString)
     collection.insertOne(doc).subscribe(new Observer[Completed] {
-      override def onNext(result: Completed): Unit = println("inserted")
+      override def onNext(result: Completed): Unit = {}
       override def onError(e: Throwable): Unit = print(e.getStackTrace)
-      override def onComplete(): Unit = println("completed")
+      override def onComplete(): Unit = {}
     })
   }
 

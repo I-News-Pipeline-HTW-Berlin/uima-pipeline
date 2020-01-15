@@ -26,10 +26,10 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
     val sourceEncoding = ""
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.USER_NAME)
-    val userName = "inews" //test: s0558059
+    val userName = "s0558059" //test: s0558059
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PW)
-    val pw = "pr3cipit4t3s" //test: f0r313g
+    val pw = "f0r313g" //test:  pr3cipit4t3s
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.SERVER_ADDRESS)
     val serverAddress = "hadoop05.f4.htw-berlin.de"
@@ -38,10 +38,10 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
     val port = "27020"
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.DB)
-    val db = "inews" //test: s0558059
+    val db = "s0558059" //test: s0558059
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.COLLECTION_NAME)
-    val collectionName = "scraped_articles" //test: scraped_articles_test
+    val collectionName = "scraped_articles_test" //test: scraped_articles_test
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.FILE_LOCATION)
     val fileLocation = "last_crawl_time.txt"
@@ -100,12 +100,12 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
 object JSONReaderDbForFirstPipeline {
   final val PARAM_SOURCE_ENCODING = ComponentParameters.PARAM_SOURCE_ENCODING
   final val ENCODING_AUTO = "auto"
-  final val USER_NAME = "inews" // s0558059
-  final val PW = "pr3cipit4t3s" // f0r313g
+  final val USER_NAME = "s0558059" // s0558059
+  final val PW = "f0r313g" //  pr3cipit4t3s
   final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
   final val PORT = "27020"
-  final val DB = "inews" // s0558059
-  final val COLLECTION_NAME = "scraped_articles" //scraped_articles_test
+  final val DB = "s0558059" // s0558059
+  final val COLLECTION_NAME = "scraped_articles_test" //scraped_articles_test
   final val FILE_LOCATION = "last_crawl_time.txt"
 }
 

@@ -1,6 +1,7 @@
 package uima
 
 
+import db.DbConnector
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasConsumer_ImplBase
 import org.apache.uima.fit.util.JCasUtil
@@ -18,6 +19,10 @@ class JsonWriter extends JCasConsumer_ImplBase {
 
   //für departments:
   val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
+
+  //versuch
+  val mongoClient = DbConnector.createClient("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de", "27020", "inews")
+  val collection = DbConnector.getCollectionFromDb("inews", "processed_articles", mongoClient)
 
   override def process(aJCas: JCas): Unit = {
 
@@ -47,10 +52,13 @@ class JsonWriter extends JCasConsumer_ImplBase {
       readingTime,
       mostRelevantLemmas,
       departments)
-      val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
+
+    //versuch, event. wieder einkommentieren
+      /*val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
       metaDataStringField.setKey("json")
       metaDataStringField.setValue(jsonString)
-      metaDataStringField.addToIndexes()
+      metaDataStringField.addToIndexes()*/
+    DbConnector.writeSingleDocumentToCollection(collection, jsonString)
   }
 }
 

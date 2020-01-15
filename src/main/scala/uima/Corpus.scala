@@ -24,6 +24,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
   //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1/de/tudarmstadt/ukp/dkpro/core/stanfordnlp/lib/ner-de-germeval2014.hgc_175m_600.crf.properties"
   //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1"
+  val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1.pom"
 
   def tokenize(): JCasIterator =
     iteratePipeline(

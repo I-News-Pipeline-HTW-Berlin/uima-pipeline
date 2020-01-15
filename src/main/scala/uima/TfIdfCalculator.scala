@@ -40,7 +40,7 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
         ne => ne.getValue.equalsIgnoreCase("person") && (ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd))
       if(!neWithEqualIndex.isEmpty && lemma.getBegin == neWithEqualIndex.head.getBegin){
         val newLem = new Lemma(aJCas, neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd)
-        newLem.setValue(docText.substring(neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd))
+        newLem.setValue(docText.substring(neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd).toLowerCase)
         newLem::list
       } else if(!neWithEqualIndex.isEmpty && lemma.getEnd == neWithEqualIndex.head.getEnd) {
         list
