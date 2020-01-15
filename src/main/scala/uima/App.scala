@@ -16,12 +16,12 @@ object App {
       "27020", "s0558059", "scraped_articles", "last_crawl_time.txt")*/
 
     //ZUM TESTEN, OB ES FUNZT BEI MEHRMALIGEN DURCHLAUF:
-    val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
-      "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")
+   /* val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
+      "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")*/
 
     //AUF INEWS SERVER LAUFEN LASSEN:
-    /*val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
-      "27020", "inews", "scraped_articles", "last_crawl_time.txt")*/
+    val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
+      "27020", "inews", "scraped_1", "last_crawl_time.txt")
 
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
