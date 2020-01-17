@@ -2,14 +2,14 @@ package uima
 
 
 import db.DbConnector
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
+import departmentsMapping.DepartmentMapping
+import json.{JSONComposer, JSONParser}
 import org.apache.uima.fit.component.JCasConsumer_ImplBase
+import org.apache.uima.fit.descriptor.{ConfigurationParameter, SofaCapability}
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
-import json.{JSONComposer, JSONParser}
-import org.apache.uima.fit.descriptor.{ConfigurationParameter, SofaCapability}
-import departmentsMapping.DepartmentMapping
 
 @SofaCapability(inputSofas = Array("MOST_RELEVANT_VIEW"))
 class JsonWriter extends JCasConsumer_ImplBase {
@@ -21,8 +21,8 @@ class JsonWriter extends JCasConsumer_ImplBase {
   val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
 
   //versuch
-  val mongoClient = DbConnector.createClient("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de", "27020", "inews")
-  val collection = DbConnector.getCollectionFromDb("inews", "processed_articles", mongoClient)
+  val mongoClient = DbConnector.createClient(uima.App.user, uima.App.pw, uima.App.server, uima.App.port, uima.App.db)
+  val collection = DbConnector.getCollectionFromDb(uima.App.db, uima.App.targetcollection, mongoClient)
 
   override def process(aJCas: JCas): Unit = {
 

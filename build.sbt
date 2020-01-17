@@ -35,7 +35,9 @@ libraryDependencies ++= Seq(
 
   "org.apache.uima" % "uimaj-tools" % "2.8.1",
 
-  "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
+  "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0",
+
+  "com.typesafe" % "config" % "1.4.0"
 
 )
 

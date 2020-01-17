@@ -25,23 +25,23 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
       defaultValue = Array(ComponentParameters.DEFAULT_ENCODING))
     val sourceEncoding = ""
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.USER_NAME)
-    val userName = "inews" //test: s0558059
+   // @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.USER_NAME)
+    val userName = uima.App.user // = ConfigFactory.load().getString("db.user") //"inews" //test: s0558059
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PW)
-    val pw = "pr3cipit4t3s" //test: f0r313g
+   // @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PW)
+    val pw = uima.App.pw //ConfigFactory.load().getString("db.pw")
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.SERVER_ADDRESS)
-    val serverAddress = "hadoop05.f4.htw-berlin.de"
+   // @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.SERVER_ADDRESS)
+    val serverAddress = uima.App.server //ConfigFactory.load().getString("db.server") //"hadoop05.f4.htw-berlin.de"
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PORT)
-    val port = "27020"
+  //  @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.PORT)
+    val port = uima.App.port //ConfigFactory.load().getString("db.port") //"27020"
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.DB)
-    val db = "inews" //test: s0558059
+  //  @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.DB)
+    val db = uima.App.db //ConfigFactory.load().getString("db.db") //"inews" //test: s0558059
 
-    @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.COLLECTION_NAME)
-    val collectionName = "scraped_articles" //test: scraped_articles_test
+  //  @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.COLLECTION_NAME)
+    val collectionName = uima.App.collection //ConfigFactory.load().getString("db.collection") //"scraped_articles" //test: scraped_articles_test
 
     @ConfigurationParameter(name = JSONReaderDbForFirstPipeline.FILE_LOCATION)
     val fileLocation = "last_crawl_time.txt"
@@ -98,14 +98,19 @@ class JSONReaderDbForFirstPipeline extends CasCollectionReader_ImplBase{
 }
 
 object JSONReaderDbForFirstPipeline {
+
+ // val configPath = System.getProperty("src/main/resources/application.conf")
+
+ // val config = ConfigFactory.parseFile(new File(configPath))
+
   final val PARAM_SOURCE_ENCODING = ComponentParameters.PARAM_SOURCE_ENCODING
   final val ENCODING_AUTO = "auto"
-  final val USER_NAME = "inews" // s0558059
-  final val PW = "pr3cipit4t3s" // f0r313g
-  final val SERVER_ADDRESS = "hadoop05.f4.htw-berlin.de"
-  final val PORT = "27020"
-  final val DB = "inews" // s0558059
-  final val COLLECTION_NAME = "scraped_articles" //scraped_articles_test
+  final val USER_NAME = uima.App.user //uima.App.user//ConfigFactory.load().getString("db.user")//config.getString("db.user") // s0558059
+  final val PW = uima.App.pw
+  final val SERVER_ADDRESS = uima.App.server
+  final val PORT = uima.App.port //"27020"
+  final val DB = uima.App.db //"inews" // s0558059
+  final val COLLECTION_NAME = uima.App.collection //"scraped_articles" //scraped_articles_test
   final val FILE_LOCATION = "last_crawl_time.txt"
 }
 

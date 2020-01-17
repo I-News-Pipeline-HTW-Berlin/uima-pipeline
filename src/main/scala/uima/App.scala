@@ -1,14 +1,24 @@
 package uima
 
-import db.DbConnector
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
-import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
-import org.apache.uima.fit.util.JCasUtil
+import com.typesafe.config.ConfigFactory
 
 object App {
 
+  // application.conf muss hierfür in resources liegen. so wird es momentan mit load() gefunden.
+  // sollte dann auf dem server ein anderer ort für die conf-datei gewählt werden, muss der pfad in load ergänzt werden
+
+  val user = ConfigFactory.load().getString("db.user")
+  val pw = ConfigFactory.load().getString("db.pw")
+  val server = ConfigFactory.load().getString("db.server")
+  val db = ConfigFactory.load().getString("db.db")
+  val port = ConfigFactory.load().getString("db.port")
+  val collection = ConfigFactory.load().getString("db.collection")
+  val targetcollection = ConfigFactory.load().getString("db.targetcollection")
+
   def main(args: Array[String]) {
+
+    // print("USER PRINT::::::" + user)
+
     //val corpus = Corpus.fromDir("testResourcesJSON")
 
     //ZUM TESTEN IN FLIPS DB:
@@ -20,8 +30,8 @@ object App {
       "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")*/
 
     //AUF INEWS SERVER LAUFEN LASSEN:
-    val corpus = Corpus.fromDb("inews", "pr3cipit4t3s", "hadoop05.f4.htw-berlin.de",
-      "27020", "inews", "scraped_articles", "last_crawl_time.txt")
+    val corpus = Corpus.fromDb(user, pw, server,
+      port, db, collection, "last_crawl_time.txt")
 
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()
