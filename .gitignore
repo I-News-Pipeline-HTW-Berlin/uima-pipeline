@@ -1,4 +1,4 @@
 target
 project
 .idea
-src/main/resources/application.conf
+application.conf
