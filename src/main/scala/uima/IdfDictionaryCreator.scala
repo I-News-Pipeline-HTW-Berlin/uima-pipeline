@@ -5,10 +5,11 @@ import java.io._
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.commons.io.FileUtils
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
-import org.apache.uima.fit.util.{JCasUtil}
+import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
 import spray.json._
 import DefaultJsonProtocol._
+import com.typesafe.config.ConfigFactory
 import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import json.JSONParser
 import org.apache.uima.fit.descriptor.ConfigurationParameter
@@ -18,8 +19,8 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
 
   //TODO falls noch zeit sollten externe Resourcen injiziert werden (s. @ExternalResource)
 
-  @ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
-  val modelPath = "src/main/resources/idfmodel.json"
+  //@ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
+  val modelPath: String = ConfigFactory.load().getString("app.idfmodellocationwrite")
 
   val oldModel = deserialize(modelPath)
   val docCountOld = oldModel.getOrElse("$docCount$", 0.0)
@@ -112,6 +113,6 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   }
 }
 
-object IdfDictionaryCreator {
-  final val MODEL_PATH = "src/main/resources/idfmodel.json"
-}
+/*object IdfDictionaryCreator {
+  final val MODEL_PATH = "modelPath"
+}*/

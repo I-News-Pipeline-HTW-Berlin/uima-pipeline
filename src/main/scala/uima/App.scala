@@ -7,13 +7,27 @@ object App {
   // application.conf muss hierfür in resources liegen. so wird es momentan mit load() gefunden.
   // sollte dann auf dem server ein anderer ort für die conf-datei gewählt werden, muss der pfad in load ergänzt werden
 
-  val user = ConfigFactory.load().getString("db.user")
-  val pw = ConfigFactory.load().getString("db.pw")
-  val server = ConfigFactory.load().getString("db.server")
-  val db = ConfigFactory.load().getString("db.db")
-  val port = ConfigFactory.load().getString("db.port")
-  val collection = ConfigFactory.load().getString("db.collection")
-  val targetcollection = ConfigFactory.load().getString("db.targetcollection")
+  /*val user = ConfigFactory.load().getString("app.user")
+  val pw = ConfigFactory.load().getString("app.pw")
+  val server = ConfigFactory.load().getString("app.server")
+  val db = ConfigFactory.load().getString("app.db")
+  val port = ConfigFactory.load().getString("app.port")
+  val collection = ConfigFactory.load().getString("app.collection")
+
+  val lastCrawlTimeFile = ConfigFactory.load().getString("app.lastcrawltimefile")
+  val idfModelToWrite = ConfigFactory.load().getString("app.idfmodellocationwrite")
+  val idfModelToRead = ConfigFactory.load().getString("app.idfmodellocationread")
+  val percentOfLemmas = ConfigFactory.load().getString("app.percentoflemmas")
+  val departmentsFile = ConfigFactory.load().getString("app.departmentslocation")
+  val wordsPerMinute = ConfigFactory.load().getString("app.wordsperminute")
+
+  val targetUser = ConfigFactory.load().getString("app.targetuser")
+  val targetPw = ConfigFactory.load().getString("app.targetpw")
+  val targetServer = ConfigFactory.load().getString("app.targetserver")
+  val targetDb = ConfigFactory.load().getString("app.targetdb")
+  val targetPort = ConfigFactory.load().getString("app.targetport")
+  val targetcollection = ConfigFactory.load().getString("app.targetcollection")*/
+
 
   def main(args: Array[String]) {
 
@@ -29,9 +43,9 @@ object App {
    /* val corpus = Corpus.fromDb("s0558059", "f0r313g", "hadoop05.f4.htw-berlin.de",
       "27020", "s0558059", "scraped_articles_test", "last_crawl_time.txt")*/
 
+
     //AUF INEWS SERVER LAUFEN LASSEN:
-    val corpus = Corpus.fromDb(user, pw, server,
-      port, db, collection, "last_crawl_time.txt")
+    val corpus = Corpus.fromDb()
 
     //val jcasIteratorLemmas = corpus.lemmatize()
     //val jcasIterator = corpus.tokenize()

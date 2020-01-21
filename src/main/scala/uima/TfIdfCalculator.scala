@@ -2,6 +2,7 @@ package uima
 
 import java.io.{File, FileInputStream, IOException, ObjectInputStream}
 
+import com.typesafe.config.ConfigFactory
 import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
@@ -13,11 +14,11 @@ import spray.json._
 
 class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
-  @ConfigurationParameter(name = TfIdfCalculator.MODEL_PATH)
-  val modelPath = "src/main/resources/idfmodel.json"
+  //@ConfigurationParameter(name = TfIdfCalculator.MODEL_PATH)
+  val modelPath: String = ConfigFactory.load().getString("app.idfmodellocationread")
 
-  @ConfigurationParameter(name = TfIdfCalculator.PERCENT_OF_LEMMAS)
-  val percentOfLemmas = "0.0285"
+  //@ConfigurationParameter(name = TfIdfCalculator.PERCENT_OF_LEMMAS)
+  val percentOfLemmas: String = ConfigFactory.load().getString("app.percentoflemmas")
 
 
   // deserialize tfidfmodel.json and read in as map
@@ -88,9 +89,9 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
 }
 
-object TfIdfCalculator {
-  final val MODEL_PATH = "src/main/resources/idfmodel.json"
-  final val PERCENT_OF_LEMMAS = "0.0285"
-}
+/*object TfIdfCalculator {
+  final val MODEL_PATH = "modelPath"
+  final val PERCENT_OF_LEMMAS = "percentOfLemmas"
+}*/
 
 

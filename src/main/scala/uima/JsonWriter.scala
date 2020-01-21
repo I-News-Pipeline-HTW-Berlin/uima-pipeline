@@ -1,6 +1,7 @@
 package uima
 
 
+import com.typesafe.config.ConfigFactory
 import db.DbConnector
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
@@ -14,15 +15,32 @@ import org.apache.uima.jcas.JCas
 @SofaCapability(inputSofas = Array("MOST_RELEVANT_VIEW"))
 class JsonWriter extends JCasConsumer_ImplBase {
 
-  @ConfigurationParameter(name = JsonWriter.DEPARTMENTS_PATH)
-  val departmentsPath = "src/main/resources/departments.json"
+  //@ConfigurationParameter(name = JsonWriter.DEPARTMENTS_PATH)
+  val departmentsPath: String = ConfigFactory.load().getString("app.departmentslocation")
+
+  //@ConfigurationParameter(name = JsonWriter.USER_NAME)
+  val userName: String = ConfigFactory.load().getString("app.targetuser")
+
+  //@ConfigurationParameter(name = JsonWriter.PW)
+  val pw: String = ConfigFactory.load().getString("app.targetpw")
+
+  //@ConfigurationParameter(name = JsonWriter.SERVER_ADDRESS)
+  val serverAddress: String = ConfigFactory.load().getString("app.targetserver")
+
+  //@ConfigurationParameter(name = JsonWriter.PORT)
+  val port: String = ConfigFactory.load().getString("app.targetport")
+
+  //@ConfigurationParameter(name = JsonWriter.DB)
+  val db: String = ConfigFactory.load().getString("app.targetdb")
+
+  //@ConfigurationParameter(name = JsonWriter.COLLECTION_NAME)
+  val collectionName: String = ConfigFactory.load().getString("app.targetcollection")
 
   //für departments:
   val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
 
-  //versuch
-  val mongoClient = DbConnector.createClient(uima.App.user, uima.App.pw, uima.App.server, uima.App.port, uima.App.db)
-  val collection = DbConnector.getCollectionFromDb(uima.App.db, uima.App.targetcollection, mongoClient)
+  val mongoClient = DbConnector.createClient(userName, pw, serverAddress, port, db)
+  val collection = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
 
   override def process(aJCas: JCas): Unit = {
 
@@ -62,6 +80,12 @@ class JsonWriter extends JCasConsumer_ImplBase {
   }
 }
 
-object JsonWriter{
-  final val DEPARTMENTS_PATH = "src/main/resources/departments.json"
-}
+/*object JsonWriter{
+  final val DEPARTMENTS_PATH = "departmentsPath"
+  final val USER_NAME = "userName"
+  final val PW = "password"
+  final val SERVER_ADDRESS = "serverAddress"
+  final val PORT = "port"
+  final val DB = "database"
+  final val COLLECTION_NAME = "collectionName"
+}*/
