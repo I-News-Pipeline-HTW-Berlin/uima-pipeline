@@ -2,9 +2,9 @@ name := "DK_Pro"
 
 version := "0.1"
 
-scalaVersion := "2.13.1"
+//scalaVersion := "2.13.1"
 
-//scalaVersion := "2.12"
+scalaVersion := "2.12.10"
 
 resolvers += "ukp-oss-model-releases" at "http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-model-releases-local"
 
@@ -37,9 +37,16 @@ libraryDependencies ++= Seq(
 
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0",
 
-  "com.typesafe" % "config" % "1.4.0"
+  "com.typesafe" % "config" % "1.4.0",
 
+  /* spark */
+  "org.apache.spark" %% "spark-core" % "2.4.4", //exclude("org.apache.hadoop", "hadoop-core"),
+  "org.apache.spark" %% "spark-sql" % "2.4.4" //exclude("org.apache.hadoop", "hadoop-core")
 )
+
+excludeDependencies ++= Seq(ExclusionRule("org.apache.hadoop", "hadoop-core"))
+dependencyOverrides += "com.google.guava" % "guava" % "15.0"
+
 
  /* assemblyShadeRules in assembly := Seq(
     case PathList("META-INF/org.apache.uima.fit/fsindexes.txt") =>

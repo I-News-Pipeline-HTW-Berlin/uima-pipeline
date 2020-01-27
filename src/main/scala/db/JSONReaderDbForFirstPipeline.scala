@@ -14,6 +14,7 @@ import org.apache.uima.util.{Progress, ProgressImpl}
 import org.mongodb.scala.MongoClient
 import org.mongodb.scala.bson.BsonDateTime
 import org.mongodb.scala.model.{Filters, Sorts}
+import uima.App
 
 import scala.io.Source
 //muss noch umbenannt werden
@@ -59,10 +60,11 @@ class JSONReaderDbForFirstPipeline() extends CasCollectionReader_ImplBase {
     val it = docs.iterator
     var latestCrawlTime = lastCrawlTime.asDateTime().getValue
     if(!docs.isEmpty){
-      latestCrawlTime = docs.map(doc => doc.getOrElse("crawl_time", BsonDateTime(value = 0)))
-        .maxBy(date => date.asDateTime().getValue)
-        .asDateTime()
-        .getValue
+      val sc = App.getSparkContext
+      val docsAsRdd = sc.parallelize(docs)
+      latestCrawlTime = docsAsRdd.map(doc => doc.getOrElse("crawl_time", BsonDateTime(value = 0)).asDateTime().getValue)
+        .max()
+      println("latest crawl time: "+latestCrawlTime)
     }
 
     var mCurrentIndex: Int = 0

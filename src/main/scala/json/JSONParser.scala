@@ -3,6 +3,8 @@ package json
 import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase.Resource
 import spray.json._
 import DefaultJsonProtocol._
+import org.apache.spark.rdd.RDD
+
 import scala.io.Source
 
 object JSONParser {
@@ -19,9 +21,17 @@ object JSONParser {
     }))
   }
 
-  def parseIdfModel(json: String) : Map[String, Double] = {
+  /*def parseIdfModel(json: String) : Map[String, Double] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
+    data.map(entry => (entry._1, entry._2 match {
+      case JsNumber(value) => value.toDouble
+    }))
+  }*/
+
+  def parseIdfModel(json: String) : List[(String, Double)] = {
+    val jsonAst = json.parseJson
+    val data = jsonAst.convertTo[Map[String, JsValue]].toList
     data.map(entry => (entry._1, entry._2 match {
       case JsNumber(value) => value.toDouble
     }))

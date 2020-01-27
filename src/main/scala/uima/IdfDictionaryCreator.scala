@@ -1,6 +1,7 @@
 package uima
 
 import java.io._
+import java.nio.charset.StandardCharsets
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.commons.io.FileUtils
@@ -12,6 +13,7 @@ import DefaultJsonProtocol._
 import com.typesafe.config.ConfigFactory
 import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import json.JSONParser
+import org.apache.spark.rdd.RDD
 import org.apache.uima.fit.descriptor.ConfigurationParameter
 
 
@@ -22,13 +24,40 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   //@ConfigurationParameter(name = IdfDictionaryCreator.MODEL_PATH)
   val modelPath: String = ConfigFactory.load().getString("app.idfmodellocationwrite")
 
-  val oldModel = deserialize(modelPath)
-  val docCountOld = oldModel.getOrElse("$docCount$", 0.0)
+  val sc = App.getSparkContext
 
-  var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
-                          .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2))).toLong))
+  val oldModelLines = RDDFromFile(modelPath)
+  val jsonString = oldModelLines.fold("")(_+_)
+  val oldModel = {
+    if(!jsonString.equals("")){JSONParser.parseIdfModel(jsonString)}
+    else{List.empty[(String, Double)]}
+  }
+  //val docCountOld = oldModel.getOrElse("$docCount$", 0.0)
+  val oldModelRdd = sc.parallelize(oldModel)
+  val docCountOld = {
+    val dcrdd = oldModelRdd.filter(entry => entry._1.equals("$docCount$"))
+    if(!dcrdd.isEmpty()){
+      dcrdd.first()._2
+    } else {
+      0.0
+    }
+  }
+
+  //val oldModel = deserialize(modelPath)
+
+
+ // var termDfMap = oldModel.filterNot(entry => entry._1.equals("$docCount$"))
+  //                        .map(entry => (entry._1, (docCountOld/Math.round(Math.exp(entry._2))).toLong))
+  //val roundFunc = IdfDictionaryCreator.round _
+  //val expFunc = IdfDictionaryCreator.exp _
+  /*var termDfMap = oldModelRdd.filter(entry => !entry._1.equals("$docCount$"))
+                          .map(entry => (entry._1,
+                            (docCountOld/IdfDictionaryCreator.round(IdfDictionaryCreator.exp(entry._2))).toLong))
+                          .collectAsMap()*/
+  var termDfMap = IdfDictionaryCreator.calculateOldDf(oldModelRdd, docCountOld.toLong).collectAsMap()
 
   var docCountNew = 0
+
 
 
   /**
@@ -39,13 +68,40 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
    */
   override def process(aJCas: JCas): Unit = {
     docCountNew+=1
-    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList.asInstanceOf[List[Lemma]]
-    val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
-    val namedEntities = JCasUtil.select(namedEntitiesView, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]
+    val lemmas = JCasUtil.select(aJCas, classOf[Lemma])
+      .toArray
+      .toList
+      .asInstanceOf[List[Lemma]]
+      //.map(l => (l.getBegin, l.getEnd, l.getValue))
+
+   // val lemmasRdd = sc.parallelize(lemmas)
+
+    val neView = aJCas.getView("NAMED_ENTITIES_VIEW")
+
+    val namedEntities = JCasUtil.select(neView, classOf[NamedEntity])
+      .toArray
+      .toList.asInstanceOf[List[NamedEntity]]
+      //.map(ne => (ne.getBegin, ne.getEnd))
+
+    //val namedEntitiesRdd = sc.parallelize(namedEntities)
+
     val docText = aJCas.getDocumentText
 
-    //hier werden lemmas wie "Elon" und "Musk" ersetzt durch "Elon Musk"
-    // erstmal nur für personen, TODO: überlegen, was und ob wir mit den restlichen namedEntities machen
+    //hier werden lemmas wie "Elon" und "Musk" ersetzt durch "Elon Musk", dh. Duplikate von lemmas und namedEntities werden entfernt
+    /*val lemmasWithNamedEntities = lemmasRdd.aggregate(List.empty[(Int, Int, String)])((list, lemma) => {
+      val neWithEqualIndex = namedEntities.filter(
+        ne => ne._1 == lemma._1 || ne._2 == lemma._2)
+      if(!neWithEqualIndex.isEmpty && lemma._1 == neWithEqualIndex.head._1){
+        (neWithEqualIndex.head._1,
+          neWithEqualIndex.head._2,
+          docText.substring(neWithEqualIndex.head._1, neWithEqualIndex.head._2))::list
+      } else if(!neWithEqualIndex.isEmpty && lemma._2 == neWithEqualIndex.head._2) {
+        list
+      }
+      else {
+        lemma::list
+      }
+    }, (l1, l2) => l1:::l2)*/
     val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
         val neWithEqualIndex = namedEntities.filter(
           ne => ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd)
@@ -60,14 +116,28 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
           lemma::list
         }
     })
-
+    //val lemmasWithNamedEntitiesRdd = sc.parallelize(lemmasWithNamedEntities)
     //df
-    termDfMap = lemmasWithNamedEntities.map(lemma => lemma.asInstanceOf[Lemma].getValue)
+    termDfMap = lemmasWithNamedEntities.map(lemma => lemma.getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0L)+1L))
   }
 
-  @SuppressWarnings(Array("unchecked"))
+  /*private def getPath(path: String, isAResource: Boolean): String = isAResource match{
+    case true => getClass.getClassLoader.getResource(path).getPath
+    case false => path
+  }*/
+
+  def RDDFromFile(path: String, isAResource: Boolean = true): RDD[String] = {
+    //val acref = getPath(path, isAResource)
+    if(!new File(path).exists()){
+      println("idf-model file doesnt exist")
+      return sc.emptyRDD[String]
+    }
+    sc.textFile(path)
+  }
+
+ /* @SuppressWarnings(Array("unchecked"))
   @throws[IOException]
   def deserialize(filePath: String): Map[String, Double] = try {
     if(! new File(filePath).exists()) {
@@ -84,7 +154,7 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
       case e: ClassNotFoundException =>
         throw new IOException(e)
     } finally if (in != null) in.close()
-  }
+  }*/
 
   @throws[IOException]
   def serialize(json: String, fileName: String): Unit = {
@@ -92,12 +162,13 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
     if (!file.exists) FileUtils.touch(file)
     if (file.isDirectory) throw new IOException("A directory with that name exists!")
     try {
-      val objOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))
+      val out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8))
+      //val objOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))
       try {
-        objOut.writeObject(json)
-        objOut.flush()
-        objOut.close()
-      } finally if (objOut != null) objOut.close()
+        out.print(json)
+        out.flush()
+        out.close()
+      } finally if (out != null) out.close()
     }
   }
 
@@ -107,12 +178,23 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
    */
   override def collectionProcessComplete(): Unit = {
     val docCountBoth = docCountOld+docCountNew
-    val termIdfMap = termDfMap.view.mapValues(df => scala.math.log(docCountBoth/df.toDouble)).toMap + ("$docCount$" -> docCountBoth)
-    val json = termIdfMap.toJson.compactPrint
+    val termDfMapRdd = sc.parallelize(termDfMap.toSeq)
+    val termIdfMap = termDfMapRdd.mapValues(df => scala.math.log(docCountBoth/df.toDouble))
+      .collectAsMap() + ("$docCount$" -> docCountBoth)
+
+
+    val json = termIdfMap.toMap.toJson.compactPrint
     serialize(json, modelPath)
   }
 }
 
-/*object IdfDictionaryCreator {
-  final val MODEL_PATH = "modelPath"
-}*/
+object IdfDictionaryCreator extends Serializable{
+  //final val MODEL_PATH = "modelPath"
+  def round(x: Double) = Math.round(x)
+  def exp(x: Double) = Math.exp(x)
+  def calculateOldDf(oldModel: RDD[(String, Double)], docCountOld: Long) : RDD[(String, Long)] = {
+    oldModel.filter(entry => !entry._1.equals("$docCount$"))
+      .map(entry => (entry._1,
+        docCountOld/round(exp(entry._2))))
+  }
+}

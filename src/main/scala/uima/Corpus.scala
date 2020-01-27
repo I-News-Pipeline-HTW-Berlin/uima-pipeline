@@ -23,6 +23,10 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
   val SEGMENTER_DE_SENTENCE_MODEL = ConfigFactory.load().getString("app.segmentersentencemodel")
   val language = ConfigFactory.load().getString("app.language")
   val lemmaModel = ConfigFactory.load().getString("app.lemmatizermodelartifacturi")
+  val charactersToRemove = Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…",
+    "!", ";", "(", "(", "(", ")", ")", ")",")", "[", "\\", ",", "‚", "‘", ".", ":", "|", "_", "„", "-", "-", "–", " ",
+    ";", "“", "^", "»", "*", "’", "&", "/", "\\", "\"", "'", "©", "§", "'", "—", "«", "·", "=", "\\", "+", "“",
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
   //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
   //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
   //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1/de/tudarmstadt/ukp/dkpro/core/stanfordnlp/lib/ner-de-germeval2014.hgc_175m_600.crf.properties"
@@ -86,11 +90,11 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
       OpenNlpSegmenter.PARAM_LANGUAGE, language),
     createEngineDescription(classOf[TokenTrimmer],
-      TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_"," ", "—", "–", "-", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
-      TokenTrimmer.PARAM_SUFFIXES, Array()),
-    createEngineDescription(classOf[TrailingCharacterRemover],
+      TokenTrimmer.PARAM_PREFIXES, charactersToRemove,
+      TokenTrimmer.PARAM_SUFFIXES, charactersToRemove),
+    /*createEngineDescription(classOf[TrailingCharacterRemover],
       TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD--–??! ;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD--–??! ;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),*/
     createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
       CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language),
     createEngineDescription(classOf[NamedEntityMapper]),
@@ -110,6 +114,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
     createEngineDescription(classOf[IxaLemmatizer],
       IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, lemmaModel,
       IxaLemmatizer.PARAM_LANGUAGE, language),
+    createEngineDescription(classOf[NumberAndPunctuationRemover]),
     createEngineDescription(classOf[TfIdfCalculator]),
     createEngineDescription(classOf[JsonWriter])
   ).iterator()
@@ -125,11 +130,11 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
       createEngineDescription(classOf[TokenTrimmer],
-        TokenTrimmer.PARAM_PREFIXES, Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…", "!", ";", "(", "(", "(", ")", ")", ")",")"),
-        TokenTrimmer.PARAM_SUFFIXES, Array()),
-      createEngineDescription(classOf[TrailingCharacterRemover],
+        TokenTrimmer.PARAM_PREFIXES, charactersToRemove,
+        TokenTrimmer.PARAM_SUFFIXES, charactersToRemove),
+      /*createEngineDescription(classOf[TrailingCharacterRemover],
         TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
+        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),*/
 
       //findet viel, aber ist nur teilweise korrekt
      /* createEngineDescription(classOf[StanfordNamedEntityRecognizer],
@@ -155,7 +160,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       createEngineDescription(classOf[IxaLemmatizer],
         IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, lemmaModel,
         IxaLemmatizer.PARAM_LANGUAGE, language),
-
+      createEngineDescription(classOf[NumberAndPunctuationRemover]),
       createEngineDescription(classOf[IdfDictionaryCreator])
     ).iterator()
 

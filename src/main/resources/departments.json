@@ -63,7 +63,9 @@
     "Google",
     "Social Media",
     "Games",
-    "Podcast"
+    "Podcast",
+    "Mobiles",
+    "IT"
   ],
   "Kultur":[
     "Netzkultur",
@@ -137,7 +139,8 @@
     "Kolumne von Carolin Emcke",
     "Kolumne von Karl-Markus Gauss",
     "Kolumne von Jagoda Marinic",
-    "Kolumne von Norbert Frei"
+    "Kolumne von Norbert Frei",
+    "Journal"
   ],
   "Satire":[
     "Wahrheit",
@@ -161,6 +164,7 @@
     "Justiz",
     "Wetter",
     "Sternenhimmel",
-    "Spiele"
+    "Spiele",
+    "Entertainment"
   ]
 }
