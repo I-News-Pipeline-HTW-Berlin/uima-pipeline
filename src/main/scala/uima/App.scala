@@ -10,7 +10,7 @@ object App {
   //master parameter muss später geändert werden
   Logger.getLogger("main").setLevel(Level.OFF)
   //Logger.getLogger("akka").setLevel(Level.OFF)
-  val conf: SparkConf = new SparkConf().setMaster("local[*]")
+  val conf: SparkConf = new SparkConf().setMaster(ConfigFactory.load().getString("app.sparkmaster"))
   conf.set("spark.app.name", "App")
   conf.set("spark.ssl.enable", "false")
   /*conf.set("spark.view.acls", "marie")
