@@ -12,12 +12,14 @@ object App {
   //Logger.getLogger("akka").setLevel(Level.OFF)
   val conf: SparkConf = new SparkConf().setMaster(ConfigFactory.load().getString("app.sparkmaster"))
   conf.set("spark.app.name", "App")
-  conf.set("spark.ssl.enable", "false")
+  conf.set("spark.dynamicAllocation.enabled", "true")
+
+  //conf.set("spark.ssl.enable", "false")
   /*conf.set("spark.view.acls", "marie")
   conf.set("spark.view.acls.groups", "marie")
   conf.set("spark.modify.acls", "marie")
   conf.set("spark.modify.acls.groups", "marie")*/
-  conf.set("spark.executer.memory", "4g")
+  conf.set("spark.executer.memory", "5g")
   conf.set("spark.driver.memory", "2g")
 
   //val spark = SparkSession.builder().config(conf).getOrCreate()
