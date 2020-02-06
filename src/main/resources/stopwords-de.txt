@@ -437,6 +437,7 @@ oft
 ohne
 ordnung
 p
+per
 q
 r
 recht
@@ -484,6 +485,7 @@ siebenter
 siebentes
 sind
 so
+sobald
 sogar
 solang
 solche

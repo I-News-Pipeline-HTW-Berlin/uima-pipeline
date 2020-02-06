@@ -90,14 +90,14 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
       TokenTrimmer.PARAM_SUFFIXES, Array()),
     createEngineDescription(classOf[TrailingCharacterRemover],
       TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD--–??! ;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),
-    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language),
-    createEngineDescription(classOf[NamedEntityMapper]),
+      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD--–??! ;“^»*’…((()))&/\"'©§'_—«·=\\E0-9]+"),
+    /*createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language),*/
+    /*createEngineDescription(classOf[NamedEntityMapper]),*/
     createEngineDescription(classOf[ReadingTimeEstimator]),
-    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language/*,
-      CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
+    /*createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language,
+      CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/
     createEngineDescription(classOf[StopWordRemover],
       StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
@@ -138,10 +138,10 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
 
       // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
       // in zusammenarbeit mit dem mapper am besten
-      createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language/*,
-        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
-      createEngineDescription(classOf[NamedEntityMapper]),
+     /* createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language,
+        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION),
+      createEngineDescription(classOf[NamedEntityMapper]),*/
 
       // findet insgesamt nur sehr wenige named entities, daher nicht so gut
       /*createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],

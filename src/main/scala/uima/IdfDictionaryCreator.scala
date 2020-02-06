@@ -40,13 +40,13 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
   override def process(aJCas: JCas): Unit = {
     docCountNew+=1
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList.asInstanceOf[List[Lemma]]
-    val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
-    val namedEntities = JCasUtil.select(namedEntitiesView, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]
+    //val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
+    //val namedEntities = JCasUtil.select(namedEntitiesView, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]
     val docText = aJCas.getDocumentText
 
     //hier werden lemmas wie "Elon" und "Musk" ersetzt durch "Elon Musk"
     // erstmal nur für personen, TODO: überlegen, was und ob wir mit den restlichen namedEntities machen
-    val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
+    /*val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
         val neWithEqualIndex = namedEntities.filter(
           ne => ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd)
         if(!neWithEqualIndex.isEmpty && lemma.getBegin == neWithEqualIndex.head.getBegin){
@@ -59,10 +59,10 @@ class IdfDictionaryCreator extends JCasAnnotator_ImplBase {
         else {
           lemma::list
         }
-    })
+    })*/
 
     //df
-    termDfMap = lemmasWithNamedEntities.map(lemma => lemma.asInstanceOf[Lemma].getValue)
+    termDfMap = lemmas.map(lemma => lemma.asInstanceOf[Lemma].getValue)
       .toSet
       .foldLeft(termDfMap)((map, lemma) => map.updated(lemma, map.getOrElse(lemma, 0L)+1L))
   }
