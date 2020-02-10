@@ -18,10 +18,10 @@ The UIMA pipeline takes the scraped articles from the mongoDB, processes them an
 On a large scale, our pipeline is divided into two parts. The reason for this structure is due to our tf-idf model - a statistical measure often used in information retrieval and text mining. With the tf-idf weight we calculate the most relevant words, later used as tags, per article. IDF stands for 'Inverse Document Frequency' and TF stands for 'term frequency'. How the tf-idf weight is calculated:
 
 ```
-* t = a given term in a article
-* TF(t) = Number of times term t appears in a document / Total number of terms in the document
-* IDF(t) = Total number of documents / Number of documents with term t in it
-* TF IDF(t) = TF(t) * IDF(t)
+t = a given term in a article
+TF(t) = Number of times term t appears in a document / Total number of terms in the document
+IDF(t) = Total number of documents / Number of documents with term t in it
+TF IDF(t) = TF(t) * IDF(t)
 ```
 
 As the IDF value needs to be calculated in respect to the overall number of documents, we decided to create a JSON file containing all the idf values for every term occuring in the articles so far, and in the second pipeline multiplying them with the tf value for the given term. 
