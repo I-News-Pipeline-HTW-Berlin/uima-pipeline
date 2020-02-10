@@ -58,9 +58,9 @@ The following steps are done for each article separately coming from our mongoDB
 
 ## Running the pipeline on the INews server
 
-Connect to the server via ssh: `ssh local@news.f4.htw-berlin.de`
-Change from local to root: `su -`
-Project folder: `home/uima/uima-pipeline`
+- Connect to the server via ssh: `ssh local@news.f4.htw-berlin.de`
+- Change from local to root: `su -`
+- Project folder: `home/uima/uima-pipeline`
 
 On the server we have two files `inews_uima.service` and `inews_uima.timer` located at `/etc/systemd/system`.
 In the .service file, amongst other things, we specify our working directory and the command how to execute our pipeline. Currently the program will be started with `sbt run`. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly added to our dependencies. (TODO? richtig so?)
