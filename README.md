@@ -2,7 +2,7 @@
 UIMA pipeline for I-News-Pipeline project. Based on DKPro Core, written in Scala
 
 ## Pipeline versions
-At the moment we have two different branches. On the `master` we have the version that is currently running on the server. On branch `spark` we have a version running with ApacheSpark that also contains two pipeline engines called NamedEntityRecognizer and NamedEntityMapper. The second is a working version, but as the NamedEntity components require a lot more time to process we didn't use it until now (TODO update!).
+At the moment we have two different branches. On the `master` we have the version that is currently running on the news server. On branch `spark` we have a version running with ApacheSpark that also contains two pipeline engines called NamedEntityRecognizer and NamedEntityMapper. The second is a working version, but as the NamedEntity components require a lot more time to process we didn't use it until now (TODO update!).
 
 
 ## Pipeline results
@@ -56,7 +56,7 @@ The following steps are done for each article separately coming from our mongoDB
 * JSON Writer: writes newly analysed article with attached departments, most relevant tags etc. to a new collection in the mongoDB
 
 
-## Running the pipeline on the INews server
+## Running the pipeline on the news server
 
 - Connect to the server via ssh: `ssh local@news.f4.htw-berlin.de`
 - Change from local to root: `su -`
