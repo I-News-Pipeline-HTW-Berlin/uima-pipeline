@@ -49,7 +49,7 @@ class JsonWriter extends JCasConsumer_ImplBase {
     val mostRelevantView = aJCas.getView("MOST_RELEVANT_VIEW")
     val mostRelevantLemmas = JCasUtil.select(mostRelevantView, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
     val originalArticle = aJCas.getView("META_VIEW").getDocumentText
-    val data = JSONParser.parseAll(originalArticle)
+    val data = JSONParser.parseOriginalArticle(originalArticle)
     val departments = DepartmentMapping.getDepartmentsForArticle(data("keywords").asInstanceOf[List[String]], depKeywordsMapping).toList
     val jsonString = JSONComposer.compose(
       data("_id").asInstanceOf[String],

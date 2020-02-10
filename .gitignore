@@ -1,6 +1,6 @@
 target
 project
 .idea
-application.conf
+src/main/resources/application.conf
 idfmodel.json
 last_crawl_time.txt

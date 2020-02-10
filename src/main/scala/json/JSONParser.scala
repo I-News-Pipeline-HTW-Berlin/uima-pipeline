@@ -1,18 +1,15 @@
 package json
 
-import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase.Resource
 import spray.json._
 import DefaultJsonProtocol._
-import org.apache.spark.rdd.RDD
-
-import scala.io.Source
 
 object JSONParser {
 
-  def getJsonStringFromResource(res: Resource) : String = {
-    Source.fromInputStream(res.getInputStream).mkString
-  }
-
+  /**
+   * Parses keyword dictionary for department mapping.
+   * @param json
+   * @return Map[String, List[String]]
+   */
   def parseDepartmentKeywordsMapping(json: String) : Map[String, List[String]] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsArray]]
@@ -21,14 +18,11 @@ object JSONParser {
     }))
   }
 
-  /*def parseIdfModel(json: String) : Map[String, Double] = {
-    val jsonAst = json.parseJson
-    val data = jsonAst.convertTo[Map[String, JsValue]]
-    data.map(entry => (entry._1, entry._2 match {
-      case JsNumber(value) => value.toDouble
-    }))
-  }*/
-
+  /**
+   * Parses idf-model.
+   * @param json
+   * @return List[(String, Double)]
+   */
   def parseIdfModel(json: String) : List[(String, Double)] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]].toList
@@ -37,27 +31,29 @@ object JSONParser {
     }))
   }
 
-  def parseStrings(json: String) : Map[String, String] = {
-
+  /**
+   * Parses document text for reader classes.
+   * @param json
+   * @return
+   */
+  def parseDocumentText(json: String) : Map[String, String] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
     data.map(key => (key._1, key._2 match {
-      /* auto-generated from intellij, vielleicht später hilfreich */
-      //case JsObject(fields) =>
-    /*  case JsArray(elements) => elements.toList.map(el => el.toString())
-      case JsNumber(value) => value
-      case boolean: JsBoolean =>
-      case JsNull =>*/
       case JsString(value) => value
       case _ => ""
     }))
   }
 
-  def parseAll(json: String) : Map[String, Any] = {
+  /**
+   * Parses orignial article.
+   * @param json
+   * @return
+   */
+  def parseOriginalArticle(json: String) : Map[String, Any] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
     data.map(key => (key._1, key._2 match {
-      /* auto-generated from intellij, vielleicht später hilfreich */
       case JsObject(fields) if fields.contains("$date") => fields("$date") match {
         case JsNumber(value) => value
       }
@@ -65,11 +61,8 @@ object JSONParser {
         case JsString(value) => value
       }
       case JsArray(elements) => elements.toList.map(jsVal => jsVal.asInstanceOf[JsString].value)
-      //case JsNumber(value) => value
-      //case boolean: JsBoolean =>
       case JsNull => null
       case JsString(value) => value
-      //case _ => ""
     }))
   }
 }
