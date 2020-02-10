@@ -1,19 +1,17 @@
 package uima
 
-import db.{JSONReaderDB, JSONReaderDbForFirstPipeline}
-import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
-import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
+//import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
+import com.typesafe.config.ConfigFactory
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
 import de.tudarmstadt.ukp.dkpro.core.stopwordremover.StopWordRemover
+import de.tudarmstadt.ukp.dkpro.core.textnormalizer.annotations.TrailingCharacterRemover
+import de.tudarmstadt.ukp.dkpro.core.tokit.TokenTrimmer
 import org.apache.uima.collection.CollectionReaderDescription
 import org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription
 import org.apache.uima.fit.factory.CollectionReaderFactory.createReaderDescription
 import org.apache.uima.fit.pipeline.JCasIterator
 import org.apache.uima.fit.pipeline.SimplePipeline.iteratePipeline
-import de.tudarmstadt.ukp.dkpro.core.textnormalizer.annotations.TrailingCharacterRemover
-import de.tudarmstadt.ukp.dkpro.core.tokit.TokenTrimmer
-import com.typesafe.config.ConfigFactory
 
 case class Corpus(reader: CollectionReaderDescription, readerForModel: CollectionReaderDescription) {
 
@@ -165,31 +163,12 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
 
 
 object Corpus {
-  def fromDir(directory: String, pattern: String = "[+]**/*.json", lang: String = "de"): Corpus = {
-    /*uima.Corpus(createReaderDescription(
-      classOf[TextReader],
-      ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION, directory,
-      ResourceCollectionReaderBase.PARAM_PATTERNS, pattern,
-      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang
-    ))*/
-
-    Corpus(createReaderDescription(
-      classOf[JSONReader],
-      ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION, directory,
-      ResourceCollectionReaderBase.PARAM_PATTERNS, pattern,
-      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang),
-      createReaderDescription(
-      classOf[JSONReaderDbForFirstPipeline],
-      ResourceCollectionReaderBase.PARAM_SOURCE_LOCATION, directory,
-      ResourceCollectionReaderBase.PARAM_PATTERNS, pattern,
-      ResourceCollectionReaderBase.PARAM_LANGUAGE, lang))
-  }
 
   def fromDb(): Corpus = {
 
     Corpus(createReaderDescription(
-      classOf[JSONReaderDB]),
+      classOf[ReaderSecondPipeline]),
       createReaderDescription(
-      classOf[JSONReaderDbForFirstPipeline]))
+      classOf[ReaderFirstPipeline]))
   }
 }

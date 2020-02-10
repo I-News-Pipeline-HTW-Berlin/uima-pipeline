@@ -4,10 +4,20 @@ import java.io.{File, IOException}
 import json.JSONParser
 import scala.io.Source
 
+/**
+ * Maps keywords to departments
+ */
+
 object DepartmentMapping {
 
 
-  def getDepartmentsForArticle(keywords: List[String], dep_keywords_dict: Map[String, List[String]]) = {
+  /**
+   * Takes list of keywords and maps them to a list of departments by looking up keywords in a dictionary
+   * @param keywords
+   * @param dep_keywords_dict
+   * @return
+   */
+  def getDepartmentsForArticle(keywords: List[String], dep_keywords_dict: Map[String, List[String]]): List[String] = {
     dep_keywords_dict.flatMap(dict => keywords.foldLeft(List[String]())((list, entry) =>
       (list, entry) match {
         case a if dict._2.contains(entry) && !list.contains(dict._1) => dict._1::list
@@ -15,6 +25,11 @@ object DepartmentMapping {
       })).toList
   }
 
+  /**
+   * Deserializes department dictionary from file
+   * @param
+   * @return
+   */
   @SuppressWarnings(Array("unchecked"))
   @throws[IOException]
   def deserialize(filePath: String):  Map[String, List[String]] = try {
@@ -37,7 +52,6 @@ object DepartmentMapping {
       }
     }
     catch {
-      // warum classnotfoundexception?
       case e: ClassNotFoundException => throw new IOException(e)
     }
   }
