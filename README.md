@@ -2,7 +2,7 @@
 UIMA pipeline for I-News-Pipeline project. Based on DKPro Core, written in Scala
 
 ## Pipeline versions
-At the moment we have two different branches. On the master we have the version that is currently running on the server. On branch 'spark' we have a version running with ApacheSpark that also contains two pipeline engines called NamedEntityRecognizer and NamedEntityMapper. The second is a working version, but as the NamedEntity components require a lot more time to process we didn't use it until now (update!).
+At the moment we have two different branches. On the `master` we have the version that is currently running on the server. On branch `spark` we have a version running with ApacheSpark that also contains two pipeline engines called NamedEntityRecognizer and NamedEntityMapper. The second is a working version, but as the NamedEntity components require a lot more time to process we didn't use it until now (TODO update!).
 
 ## Pipeline results
 
@@ -52,22 +52,22 @@ The following steps are done for each article separately coming from our mongoDB
 
 ## Running the pipeline on the INews server
 
-Connect to the server via ssh: ssh local@news.f4.htw-berlin.de
-Change from local to root: su -
-Project folder: home/uima/uima-pipeline
+Connect to the server via ssh: `ssh local@news.f4.htw-berlin.de`
+Change from local to root: `su -`
+Project folder: `home/uima/uima-pipeline`
 
-On the server we have two files 'inews_uima.service' and 'inews_uima.timer' located at /etc/systemd/system.
-In the service file, amongst other things, we specify our working directory and the command how to execute our pipeline. Currently the program will be started with 'sbt run'. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly added to our dependencies. (TODO? richtig so?)
-With 'Wants=inews_uima.timer' we provide the connection to our .timer file. In the latter, we define the date/ time when the server should run our program. Currently it is set to be executed each day at 01:00:00.
+On the server we have two files `inews_uima.service` and `inews_uima.timer` located at `/etc/systemd/system`.
+In the .service file, amongst other things, we specify our working directory and the command how to execute our pipeline. Currently the program will be started with `sbt run`. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly added to our dependencies. (TODO? richtig so?)
+With `Wants=inews_uima.timer` we provide the connection to our .timer file. In the latter, we define the date/ time when the server should run our program. Currently it is set to be executed each day at 01:00:00.
 
-In our project folder under src/main/resources the 'application.conf' file contains various configuration parameters such as the server name, the database and collection names where the scraped articles are taken from and after processing written to, usernames, passwords etc.
+In our project folder under `src/main/resources` the `application.conf` file contains various configuration parameters such as the server name, the database and collection names where the scraped articles are taken from and after processing written to, usernames, passwords etc.
 Further, we define the location of the following files: file containing the last crawl time, our idfmodel, our departments mapping file.
 We also define the percentage of how many most relevant terms (tags) we want to save from a given article (longer articles -> more relevant terms/ shorter articles -> less terms) and the number of words an average person could read per minute (used to estimate the reading time per article).
 
 
 
 
-# Further links:
+## Further links:
 * UserGuide for ApacheFit: https://uima.apache.org/d/uimafit-current/tools.uimafit.book.html
 * DKPro User Guide: https://dkpro.github.io/dkpro-core/releases/2.0.0/docs/user-guide.html
 * DKPro Developer Guide: https://dkpro.github.io/dkpro-core/releases/2.0.0/docs/developer-guide.html
