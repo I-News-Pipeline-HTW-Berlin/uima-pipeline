@@ -1,6 +1,5 @@
 package uima
 
-import de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase
 import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpNamedEntityRecognizer
 import de.tudarmstadt.ukp.dkpro.core.ixa.IxaLemmatizer
 import de.tudarmstadt.ukp.dkpro.core.opennlp.{OpenNlpPosTagger, OpenNlpSegmenter}
@@ -15,112 +14,101 @@ import com.typesafe.config.ConfigFactory
 
 case class Corpus(reader: CollectionReaderDescription, readerForModel: CollectionReaderDescription) {
 
-  val STOPWORD_FILE = ConfigFactory.load().getString("app.stopwordfile")
-  val POS_TAGGER_DE_MODEL = ConfigFactory.load().getString("app.postaggermodel")
-  val SEGMENTER_DE_TOKEN_MODEL = ConfigFactory.load().getString("app.segmentertokenmodel")
-  val SEGMENTER_DE_SENTENCE_MODEL = ConfigFactory.load().getString("app.segmentersentencemodel")
-  val language = ConfigFactory.load().getString("app.language")
-  val lemmaModel = ConfigFactory.load().getString("app.lemmatizermodelartifacturi")
-  val charactersToRemove = Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…",
+  /**
+   * Path to file containing stop words
+   */
+  val STOPWORD_FILE: String = ConfigFactory.load().getString("app.stopwordfile")
+
+  /**
+   * Model for part of speech tagging
+   */
+  val POS_TAGGER_DE_MODEL: String = ConfigFactory.load().getString("app.postaggermodel")
+
+  /**
+   * Model for token segmentation
+   */
+  val SEGMENTER_DE_TOKEN_MODEL: String = ConfigFactory.load().getString("app.segmentertokenmodel")
+
+  /**
+   * Model for sentence segmentation
+   */
+  val SEGMENTER_DE_SENTENCE_MODEL: String = ConfigFactory.load().getString("app.segmentersentencemodel")
+
+  /**
+   * Language of the documents to be analyzed
+   */
+  val LANGUAGE: String = ConfigFactory.load().getString("app.language")
+
+  /**
+   * Artifact uri of model for lemmatizer
+   */
+  val LEMMATIZER_DE_MODEL: String = ConfigFactory.load().getString("app.lemmatizermodelartifacturi")
+
+  /**
+   * All sufix and prefix characters to be removed by TokenTrimmer
+   */
+  val CHARACTERS_TO_REMOVE: Array[String] = Array(":", "\"", ".", "|", "“", "„", "-", "_", "—", "–", "\u00AD", "‚", "‘", "?", "?", "…",
     "!", ";", "(", "(", "(", ")", ")", ")",")", "[", "\\", ",", "‚", "‘", ".", ":", "|", "_", "„", "-", "-", "–", " ",
-    ";", "“", "^", "»", "*", "’", "&", "/", "\\", "\"", "'", "©", "§", "'", "—", "«", "·", "=", "\\", "+", "“",
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-  //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_stanford_01"
-  //val NAMED_ENTITY_RECOGNIZER_MODEL = "src/main/resources/nemgp_opennlp_01.bin"
-  //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1/de/tudarmstadt/ukp/dkpro/core/stanfordnlp/lib/ner-de-germeval2014.hgc_175m_600.crf.properties"
-  //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1"
-  //val NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION = "src/main/resources/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-model-ner-de-germeval2014.hgc_175m_600.crf-20180227.1.pom"
+    ";", "“", "^", "»", "*", "’", "&", "/", "\\", "\"", "'", "©", "§", "'", "—", "«", "·", "=", "\\", "+", "“")
 
-  def tokenize(): JCasIterator =
-    iteratePipeline(
-      reader,
-      createEngineDescription(classOf[OpenNlpSegmenter],
-        OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
-        OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
-        OpenNlpSegmenter.PARAM_LANGUAGE, language)
-    ).iterator()
-
-  def removeStopWords(): JCasIterator =
-    iteratePipeline(
-      reader,
-      createEngineDescription(classOf[OpenNlpSegmenter],
-        OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
-        OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
-        OpenNlpSegmenter.PARAM_LANGUAGE, language),
-      createEngineDescription(classOf[StopWordRemover],
-        StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE)
-    ).iterator()
-
-  def lemmatize(): JCasIterator =
-    iteratePipeline(
-      reader,
-      createEngineDescription(classOf[OpenNlpSegmenter],
-        OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
-        OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
-        OpenNlpSegmenter.PARAM_LANGUAGE, language),
-      createEngineDescription(classOf[StopWordRemover],
-        StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
-      createEngineDescription(classOf[OpenNlpPosTagger],
-        OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
-        OpenNlpPosTagger.PARAM_LANGUAGE, language),
-      /*createEngineDescription(classOf[OpenNlpLemmatizer], OpenNlpLemmatizer.PARAM_MODEL_LOCATION, MODEL_GERMAN,
-        OpenNlpLemmatizer.PARAM_LANGUAGE, "de")*/
-      //TODO find better lemmatizer with german model available
-      //createEngineDescription(classOf[LanguageToolLemmatizer])
-      createEngineDescription(classOf[IxaLemmatizer],
-        IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, lemmaModel,
-        IxaLemmatizer.PARAM_LANGUAGE, language)
-    ).iterator()
-
-  def estimateReadingTime(): JCasIterator = iteratePipeline(
-    reader,
-    createEngineDescription(classOf[OpenNlpSegmenter],
-      OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
-      OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
-      OpenNlpSegmenter.PARAM_LANGUAGE, language),
-    createEngineDescription(classOf[ReadingTimeEstimator])
-  ).iterator()
-
+  /**
+   * Creates the main (second) pipeline. The pipeline is constructed of the following components:
+   * - a reader (see ReaderFirstPipeline)
+   * - OpenNlpSegmenter (splits text into tokens, see DKPro documentation)
+   * - TokenTrimmer (removes unwanted leading and trailing characters from token, see DKPro documentation)
+   * - CoreNlpNamedEntityRecognizer (creates NamedEntity annotations, see DKPro documentation)
+   * - NamedEntityMapper (see class NamedEntityMapper)
+   * - ReadingTimeEstimator (see class ReadingTimeEstimator)
+   * - StopWordRemover (removes Tokens that match words specified in STOPWORD_FILE, see DKPro documentation)
+   * - OpenNlpPosTagger (creates a POS annotation for each Token annotation, see DKPro documentation)
+   * - IxaLemmatizer (creates a Lemma annotation for each Token annotation, see DKPro documentation)
+   * - NumberAndPunctuationRemover (see class NumberANdPunctuationRemover)
+   * - TfIdfCalculator (see class TfIdfCalculator)
+   * - JsonWriter (see class JsonWriter).
+   * @return a JCasIterator
+   */
   def mainPipeline(): JCasIterator = iteratePipeline(
     reader,
     createEngineDescription(classOf[OpenNlpSegmenter],
       OpenNlpSegmenter.PARAM_TOKENIZATION_MODEL_LOCATION, SEGMENTER_DE_TOKEN_MODEL,
       OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
-      OpenNlpSegmenter.PARAM_LANGUAGE, language),
+      OpenNlpSegmenter.PARAM_LANGUAGE, LANGUAGE),
     createEngineDescription(classOf[TokenTrimmer],
-      TokenTrimmer.PARAM_PREFIXES, charactersToRemove,
-      TokenTrimmer.PARAM_SUFFIXES, charactersToRemove),
-    /*createEngineDescription(classOf[TrailingCharacterRemover],
-      TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-      TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD--–??! ;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),*/
+      TokenTrimmer.PARAM_PREFIXES, CHARACTERS_TO_REMOVE,
+      TokenTrimmer.PARAM_SUFFIXES, CHARACTERS_TO_REMOVE),
     createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language),
+      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, LANGUAGE),
     createEngineDescription(classOf[NamedEntityMapper]),
     createEngineDescription(classOf[ReadingTimeEstimator]),
-    createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-      CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language/*,
-      CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
     createEngineDescription(classOf[StopWordRemover],
       StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
     createEngineDescription(classOf[OpenNlpPosTagger],
       OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
-      OpenNlpPosTagger.PARAM_LANGUAGE, language),
-    /*createEngineDescription(classOf[OpenNlpLemmatizer], OpenNlpLemmatizer.PARAM_MODEL_LOCATION, MODEL_GERMAN,
-      OpenNlpLemmatizer.PARAM_LANGUAGE, "de")*/
+      OpenNlpPosTagger.PARAM_LANGUAGE, LANGUAGE),
     //TODO find better lemmatizer with german model available
-    //createEngineDescription(classOf[LanguageToolLemmatizer])
     createEngineDescription(classOf[IxaLemmatizer],
-      IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, lemmaModel,
-      IxaLemmatizer.PARAM_LANGUAGE, language),
+      IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, LEMMATIZER_DE_MODEL,
+      IxaLemmatizer.PARAM_LANGUAGE, LANGUAGE),
     createEngineDescription(classOf[NumberAndPunctuationRemover]),
     createEngineDescription(classOf[TfIdfCalculator]),
     createEngineDescription(classOf[JsonWriter])
   ).iterator()
 
+  /**
+   * Creates the pipeline to write model (first pipeline). The pipeline is constructed of the following components:
+   * - a reader (see ReaderSecondPipeline)
+   * - OpenNlpSegmenter (splits text into tokens, see DKPro documentation)
+   * - TokenTrimmer (removes unwanted leading and trailing characters from token, see DKPro documentation)
+   * - CoreNlpNamedEntityRecognizer (creates NamedEntity annotations, see DKPro documentation)
+   * - NamedEntityMapper (see class NamedEntityMapper)
+   * - StopWordRemover (removes Tokens that match words specified in STOPWORD_FILE, see DKPro documentation)
+   * - OpenNlpPosTagger (creates a POS annotation for each Token annotation, see DKPro documentation)
+   * - IxaLemmatizer (creates a Lemma annotation for each Token annotation, see DKPro documentation)
+   * - NumberAndPunctuationRemover (see class NumberANdPunctuationRemover)
+   * - IdfDictionaryCreator (creates idf dictionary, see class IdfDictionaryCreator)
+   * @return a JCasIterator
+   */
   def writeModel(): JCasIterator =
-   /*val idfDictCreatorDesc = createEngineDescription(classOf[IdfDictionaryCreator],
-      IdfDictionaryCreator.MODEL_PATH, "src/main/resources/idfmodel.json")
-    val idfDictCreator = AnalysisEngineFactory.createEngine(idfDictCreatorDesc)*/
     iteratePipeline(
       readerForModel,
       createEngineDescription(classOf[OpenNlpSegmenter],
@@ -128,47 +116,31 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
         OpenNlpSegmenter.PARAM_SEGMENTATION_MODEL_LOCATION, SEGMENTER_DE_SENTENCE_MODEL,
         OpenNlpSegmenter.PARAM_LANGUAGE, "de"),
       createEngineDescription(classOf[TokenTrimmer],
-        TokenTrimmer.PARAM_PREFIXES, charactersToRemove,
-        TokenTrimmer.PARAM_SUFFIXES, charactersToRemove),
-      /*createEngineDescription(classOf[TrailingCharacterRemover],
-        TrailingCharacterRemover.PARAM_MIN_TOKEN_LENGTH, 1,
-        TrailingCharacterRemover.PARAM_PATTERN, "[\\Q,‚‘.:|_„\u00AD-–??!;“^»*’…((()))&/\"'©§'—«·=\\E0-9]+"),*/
-
-      //findet viel, aber ist nur teilweise korrekt
-     /* createEngineDescription(classOf[StanfordNamedEntityRecognizer],
-        StanfordNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        StanfordNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
-
-      // findet viel und ist am korrektesten, nur problem bei namen: vorname und nachname werden als namen erkannt, aber nicht als 1 name
-      // in zusammenarbeit mit dem mapper am besten
+        TokenTrimmer.PARAM_PREFIXES, CHARACTERS_TO_REMOVE,
+        TokenTrimmer.PARAM_SUFFIXES, CHARACTERS_TO_REMOVE),
       createEngineDescription(classOf[CoreNlpNamedEntityRecognizer],
-        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, language/*,
-        CoreNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL_LOCATION*/),
+        CoreNlpNamedEntityRecognizer.PARAM_LANGUAGE, LANGUAGE),
       createEngineDescription(classOf[NamedEntityMapper]),
-
-      // findet insgesamt nur sehr wenige named entities, daher nicht so gut
-      /*createEngineDescription(classOf[OpenNlpNamedEntityRecognizer],
-        OpenNlpNamedEntityRecognizer.PARAM_LANGUAGE, "de",
-        OpenNlpNamedEntityRecognizer.PARAM_MODEL_LOCATION, NAMED_ENTITY_RECOGNIZER_MODEL),*/
       createEngineDescription(classOf[StopWordRemover],
         StopWordRemover.PARAM_MODEL_LOCATION, STOPWORD_FILE),
       createEngineDescription(classOf[OpenNlpPosTagger],
         OpenNlpPosTagger.PARAM_MODEL_LOCATION, POS_TAGGER_DE_MODEL,
-        OpenNlpPosTagger.PARAM_LANGUAGE, language),
+        OpenNlpPosTagger.PARAM_LANGUAGE, LANGUAGE),
       createEngineDescription(classOf[IxaLemmatizer],
-        IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, lemmaModel,
-        IxaLemmatizer.PARAM_LANGUAGE, language),
+        IxaLemmatizer.PARAM_MODEL_ARTIFACT_URI, LEMMATIZER_DE_MODEL,
+        IxaLemmatizer.PARAM_LANGUAGE, LANGUAGE),
       createEngineDescription(classOf[NumberAndPunctuationRemover]),
       createEngineDescription(classOf[IdfDictionaryCreator])
     ).iterator()
-
-
 }
 
 object Corpus {
 
+  /**
+   * Creates the Corpus with the two reader descriptions needed to run the pipeline.
+   * @return Corpus
+   */
   def fromDb(): Corpus = {
-
     Corpus(createReaderDescription(
       classOf[ReaderSecondPipeline]),
       createReaderDescription(
