@@ -53,7 +53,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
 
   /**
    * Creates the main (second) pipeline. The pipeline is constructed of the following components:
-   * - a reader (see ReaderFirstPipeline)
+   * - a reader (see ReaderSecondPipeline)
    * - OpenNlpSegmenter (splits text into tokens, see DKPro documentation)
    * - TokenTrimmer (removes unwanted leading and trailing characters from token, see DKPro documentation)
    * - CoreNlpNamedEntityRecognizer (creates NamedEntity annotations, see DKPro documentation)
@@ -96,7 +96,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
 
   /**
    * Creates the pipeline to write model (first pipeline). The pipeline is constructed of the following components:
-   * - a reader (see ReaderSecondPipeline)
+   * - a reader (see ReaderFirstPipeline)
    * - OpenNlpSegmenter (splits text into tokens, see DKPro documentation)
    * - TokenTrimmer (removes unwanted leading and trailing characters from token, see DKPro documentation)
    * - CoreNlpNamedEntityRecognizer (creates NamedEntity annotations, see DKPro documentation)
@@ -104,7 +104,7 @@ case class Corpus(reader: CollectionReaderDescription, readerForModel: Collectio
    * - StopWordRemover (removes Tokens that match words specified in STOPWORD_FILE, see DKPro documentation)
    * - OpenNlpPosTagger (creates a POS annotation for each Token annotation, see DKPro documentation)
    * - IxaLemmatizer (creates a Lemma annotation for each Token annotation, see DKPro documentation)
-   * - NumberAndPunctuationRemover (see class NumberANdPunctuationRemover)
+   * - NumberAndPunctuationRemover (see class NumberAndPunctuationRemover)
    * - IdfDictionaryCreator (creates idf dictionary, see class IdfDictionaryCreator)
    * @return a JCasIterator
    */
