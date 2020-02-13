@@ -71,7 +71,7 @@ The following steps are done for each article separately coming from our mongoDB
 On the news server we use `systemd` as init system/ system manager to run our services. For that purpose we have two files `inews_uima.service` and `inews_uima.timer` located at `/etc/systemd/system`.
 In the .service file, amongst other things, we specify our working directory and instructions for execution of our program. Currently it will be started with `sbt run`. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly shaded with sbt (this is a TODO). 
 With `Wants=inews_uima.timer` we provide the connection to our .timer file. In the latter, we define the date/ time when the server should run our program. Currently it is set to be executed each day at 01:00:00.
-Keep in mind that the running version on news server is the current version on master branch which does not include named entity tagging.
+Keep in mind that the running version on news server is the current version on `master` branch which does not include named entity tagging.
 
 #### Starting and stoping systemd services
 Note: If you are running as a non-root user, you will have to use `sudo` since this will affect the state of the operating system.
