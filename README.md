@@ -76,30 +76,29 @@ Keep in mind that the running version on news server is the current version on m
 #### Starting and stoping systemd services
 Note: If you are running as a non-root user, you will have to use `sudo` since this will affect the state of the operating system.
 
-`systemctl start inews_uima.service` -> starts a systemd service, in this case the .service file
-`systemctl stop inews_uima.service` -> stops a currently running service
-`systemctl restart inews_uima.service` -> restarts a running service
-`systemctl reload inews_uima.service` -> reloads the service
-`systemctl daemon-reload` -> reloads systemd manager configuration, rerun all generators, reload all unit files, and recreate the dependency tree
+- `systemctl start inews_uima.service` -> starts a systemd service, in this case the .service file
+- `systemctl stop inews_uima.service` -> stops a currently running service
+- `systemctl restart inews_uima.service` -> restarts a running service
+- `systemctl reload inews_uima.service` -> reloads the service
+- `systemctl daemon-reload` -> reloads systemd manager configuration, rerun all generators, reload all unit files, and recreate the dependency tree
 
 #### Enabling and disabling services
 The above commands are useful for starting or stopping commands during the current session. To tell systemd to start services automatically at boot, you must enable them.
 
-`systemctl enable inews_uima.service` -> starts a service at boot
-`systemctl disable inews_uima.service` -> disables the service from starting automatically
-
-For further interest see for example here: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units or https://wiki.ubuntuusers.de/systemd/systemctl/
-
+- `systemctl enable inews_uima.service` -> starts a service at boot
+- `systemctl disable inews_uima.service` -> disables the service from starting automatically
 
 #### Check the status of a service
-`systemctl status inews_uima.service` -> provides the service state and the first few log lines
+- `systemctl status inews_uima.service` -> provides the service state and the first few log lines
+
+For further interest see for example here: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units or https://wiki.ubuntuusers.de/systemd/systemctl/
 
 ## Running the pipeline on hadoop05 server
 
 - Connect to the server via ssh: `ssh inews@hadoop05.f4.htw-berlin.de`
 - Project folder: `~/uima-pipeline`
 
-The code on branch spark ist currently running on hadoop05 as cron-job under the userid inews. Currently the code is being executed 4 times per day. Once the whole scraped_articles collection is analyzed this can be changed to only once a day at 1 am as done on news server. 
+The code on branch `spark` ist currently running on hadoop05 as cron-job under the userid inews. Currently the code is being executed 4 times per day. Once the whole scraped_articles collection is analyzed this can be changed to only once a day at 1 am as done on news server. 
 Currently the cron-job looks like this: `30 */6 * * * cd uima-pipeline && sbt run >>~/uima.log`.
 To edit type `crontab -e`.
 
