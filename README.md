@@ -62,9 +62,31 @@ The following steps are done for each article separately coming from our mongoDB
 - Change from local to root: `su -`
 - Project folder: `home/uima/uima-pipeline`
 
-On the server we have two files `inews_uima.service` and `inews_uima.timer` located at `/etc/systemd/system`.
-In the .service file, amongst other things, we specify our working directory and the command how to execute our pipeline. Currently the program will be started with `sbt run`. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly added to our dependencies. (TODO? richtig so?)
+On the server we use `systemd` as init system/ system manager to run our services. For that purpose we have two files `inews_uima.service` and `inews_uima.timer` located at `/etc/systemd/system`.
+In the .service file, amongst other things, we specify our working directory and instructions for execution of our program. Currently it will be started with `sbt run`. This was a workaround as we couldn't create a jar-file from our project due to some DKPro components that could not be correctly added to our dependencies. (TODO? richtig so?)
 With `Wants=inews_uima.timer` we provide the connection to our .timer file. In the latter, we define the date/ time when the server should run our program. Currently it is set to be executed each day at 01:00:00.
+
+#### Starting and stoping systemd services
+Note: If you are running as a non-root user, you will have to use `sudo` since this will affect the state of the operating system.
+
+`systemctl start inews_uima.service` -> starts a systemd service, in this case the .service file
+`systemctl stop inews_uima.service` -> stops a currently running service
+`systemctl restart inews_uima.service` -> restarts a running service
+`systemctl reload inews_uima.service` -> reloads the service
+`systemctl daemon-reload` -> reloads systemd manager configuration, rerun all generators, reload all unit files, and recreate the dependency tree
+
+#### Enabling and disabling services
+The above commands are useful for starting or stopping commands during the current session. To tell systemd to start services automatically at boot, you must enable them.
+
+`systemctl enable inews_uima.service` -> starts a service at boot
+`systemctl disable inews_uima.service` -> disables the service from starting automatically
+
+For further interest see for example here: https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units or https://wiki.ubuntuusers.de/systemd/systemctl/
+
+
+#### Check the status of a service
+`systemctl status inews_uima.service` -> provides the service state and the first few log lines
+
 
 In our project folder under `src/main/resources` the `application.conf` file contains various configuration parameters such as the server name, the database and collection names where the scraped articles are taken from and after processing written to, usernames, passwords etc.
 Further, we define the location of the following files: file containing the last crawl time, our idfmodel, our departments mapping file.
