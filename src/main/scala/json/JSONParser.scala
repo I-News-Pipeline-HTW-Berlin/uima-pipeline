@@ -34,7 +34,7 @@ object JSONParser {
   /**
    * Parses document text for reader classes.
    * @param json
-   * @return
+   * @return Map[String, String]
    */
   def parseDocumentText(json: String) : Map[String, String] = {
     val jsonAst = json.parseJson
@@ -48,7 +48,7 @@ object JSONParser {
   /**
    * Parses orignial article.
    * @param json
-   * @return
+   * @return Map[String, Any]
    */
   def parseOriginalArticle(json: String) : Map[String, Any] = {
     val jsonAst = json.parseJson
