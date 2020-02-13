@@ -57,8 +57,8 @@ class ReaderSecondPipeline extends CasCollectionReader_ImplBase {
    */
   val fileLocation: String = ConfigFactory.load().getString("app.lastcrawltimefile")
 
-
   val mongoClient: MongoClient = DbConnector.createClient(userName, pw, serverAddress, port, db)
+
   val lastCrawlTime: BsonDateTime = getLastCrawlTime
 
   val docs: Seq[Document] = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
@@ -73,6 +73,7 @@ class ReaderSecondPipeline extends CasCollectionReader_ImplBase {
   println("Analysing " + docs.size + " documents...")
 
   val iterator: Iterator[Document] = docs.iterator
+
   var latestCrawlTime: Long = lastCrawlTime.asDateTime().getValue
 
   if(docs.nonEmpty){

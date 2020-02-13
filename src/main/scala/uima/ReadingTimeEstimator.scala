@@ -1,21 +1,28 @@
 package uima
 
 import com.typesafe.config.ConfigFactory
+import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Token
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
-import org.apache.uima.fit.descriptor.ConfigurationParameter
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
-import de.tudarmstadt.ukp.dkpro.core.api.metadata.`type`.MetaDataStringField
 
-
-
-
+/**
+ * This component calculates the time it takes to read the text of each document.
+ */
 class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
 
-  //@ConfigurationParameter(name = ReadingTimeEstimator.WORDS_PER_MINUTE)
+  /**
+   * The number of words the average reader can read in one minute (assumption).
+   */
   val wordsPerMinute: String = ConfigFactory.load().getString("app.wordsperminute")
 
+  /**
+   * Estimates the reading time and rounds it up or down to full minutes.
+   * @param wordCount
+   * @param wordsPerMinute
+   * @return Int (minutes)
+   */
   def estimateReadingTime(wordCount: Int, wordsPerMinute: Double = 200.0) : Int = {
     val estimateTime = wordCount.toDouble / wordsPerMinute
     val minutes = estimateTime.toInt
@@ -26,7 +33,12 @@ class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
     }
   }
 
-
+  /**
+   * Gets the number of words of document text,
+   * calculates reading time and
+   * uses MetaDataStringField annotation to save reading time for document.
+   * @param aJCas
+   */
   override def process(aJCas: JCas): Unit = {
     val numOfWords = JCasUtil.select(aJCas, classOf[Token]).size()
     val readingTime = estimateReadingTime(numOfWords, wordsPerMinute.toDouble)
@@ -36,7 +48,3 @@ class ReadingTimeEstimator extends JCasAnnotator_ImplBase{
     metaDataStringField.addToIndexes()
   }
 }
-
-/*object ReadingTimeEstimator{
-  final val WORDS_PER_MINUTE = "wordsPerMinute"
-}*/

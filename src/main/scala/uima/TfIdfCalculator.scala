@@ -3,64 +3,68 @@ package uima
 import java.io.{File, FileInputStream, IOException, ObjectInputStream}
 
 import com.typesafe.config.ConfigFactory
-import de.tudarmstadt.ukp.dkpro.core.api.ner.`type`.NamedEntity
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase
-import org.apache.uima.fit.descriptor.ConfigurationParameter
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
+/**
+ * This Component reads the idf model created by the first pipeline,
+ * calculates the tf-idf values for all lemmas
+ * and extracts the most relevant lemmas (lemmas with the highest tf-idf).
+ * The number of most relevant lemmas depends on the total number of lemmas in the document text
+ * and can be adapted in the config file.
+ */
 class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
-  //@ConfigurationParameter(name = TfIdfCalculator.MODEL_PATH)
+  /**
+   * Location of the idf model to be read
+   */
   val modelPath: String = ConfigFactory.load().getString("app.idfmodellocationread")
 
-  //@ConfigurationParameter(name = TfIdfCalculator.PERCENT_OF_LEMMAS)
+  /**
+   * Percentage of lemmas of all lemmas to become most relevant lemmas
+   */
   val percentOfLemmas: String = ConfigFactory.load().getString("app.percentoflemmas")
 
-
-  // deserialize tfidfmodel.json and read in as map
   val jsonString: String = deserialize[String](modelPath)
   val jsonAst: JsValue = jsonString.parseJson
-  val termIdfMap = jsonAst.convertTo[Map[String, Int]]
 
-  // calculate TF(w) = (Number of times term w appears in a document) / (Total number of terms in the document)
+  /**
+   * The idf model
+   */
+  val termIdfMap: Map[String, Int] = jsonAst.convertTo[Map[String, Int]]
+
+  /**
+   * Calculates tf value for each lemma
+   * TF(w) = (Number of times term w appears in a document) / (Total number of terms in the document),
+   * calculates tf-idf for each lemma
+   * TF-IDF = TF * IDF (taken from idf model)
+   * and extracts given percentage of lemmas as most relevant lemmas.
+   *
+   * @param aJCas
+   */
   override def process(aJCas: JCas): Unit = {
 
+    // get all lemmas
     val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray().toList.asInstanceOf[List[Lemma]]
-//    val namedEntitiesView = aJCas.getView("NAMED_ENTITIES_VIEW")
-  //  val namedEntities = JCasUtil.select(namedEntitiesView, classOf[NamedEntity]).toArray.toList.asInstanceOf[List[NamedEntity]]
-    val docText = aJCas.getDocumentText
 
-    //hier werden lemmas wie "Elon" und "Musk" ersetzt durch "Elon Musk"
-    // erstmal nur für personen, TODO: überlegen, was und ob wir mit den restlichen namedEntities machen
-    /*val lemmasWithNamedEntities = lemmas.foldLeft(List.empty[Lemma])((list, lemma) => {
-      val neWithEqualIndex = namedEntities.filter(
-        ne => ne.getBegin == lemma.getBegin || ne.getEnd == lemma.getEnd)
-      if(!neWithEqualIndex.isEmpty && lemma.getBegin == neWithEqualIndex.head.getBegin){
-        val newLem = new Lemma(aJCas, neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd)
-        newLem.setValue(docText.substring(neWithEqualIndex.head.getBegin, neWithEqualIndex.head.getEnd).toLowerCase)
-        newLem::list
-      } else if(!neWithEqualIndex.isEmpty && lemma.getEnd == neWithEqualIndex.head.getEnd) {
-        list
-      }
-      else {
-        lemma::list
-      }
-    })*/
+    // total number of lemmas
     val nrOfLemmas = lemmas.size
 
     // create map with lemmas and their tf-values
     val tfMap = lemmas
-      .map(lemma => lemma.asInstanceOf[Lemma].getValue)
+      .map(lemma => lemma.getValue)
       .groupBy(x => x)
       .view.mapValues(_.length / nrOfLemmas.toDouble).toMap
 
-    // create map with lemmas and their calculated tfIdf-values
+    // create and get view for most relevant lemmas
     aJCas.createView("MOST_RELEVANT_VIEW")
     val mostRelevantView = aJCas.getView("MOST_RELEVANT_VIEW")
+
+    // create map with lemmas and their calculated tfIdf-values
     val tfidfMap = tfMap.map(lemma => ( {
       val anno = new Lemma(mostRelevantView)
       anno.setValue(lemma._1)
@@ -69,9 +73,17 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
     // get n most relevant (lemmas with highest tfidf values)
     val mostRelevantLemmas = getMostRelevant((nrOfLemmas * percentOfLemmas.toDouble).toInt, tfidfMap)
+
+    // add most relevant lemmas to indexes in the view
     mostRelevantLemmas.foreach(_.addToIndexes())
   }
 
+  /**
+   * Sorts the given tf-idf map by descending tf-idf values and returns the first n (amount).
+   * @param amount
+   * @param tfIdfMap
+   * @return List[String]
+   */
   def getMostRelevant(amount: Int, tfIdfMap: Map[Lemma, Double]): List[Lemma] = {
     List(tfIdfMap.toSeq.sortWith(_._2 > _._2): _*).take(amount).toMap.keys.toList
   }
@@ -89,9 +101,5 @@ class TfIdfCalculator extends JCasAnnotator_ImplBase {
 
 }
 
-/*object TfIdfCalculator {
-  final val MODEL_PATH = "modelPath"
-  final val PERCENT_OF_LEMMAS = "percentOfLemmas"
-}*/
 
 

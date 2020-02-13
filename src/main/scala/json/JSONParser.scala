@@ -5,6 +5,11 @@ import spray.json._
 
 object JSONParser {
 
+  /**
+   * Parses keyword dictionary for department mapping.
+   * @param json
+   * @return Map[String, List[String]]
+   */
   def parseDepartmentKeywordsMapping(json: String) : Map[String, List[String]] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsArray]]
@@ -13,6 +18,11 @@ object JSONParser {
     }))
   }
 
+  /**
+   * Parses idf-model.
+   * @param json
+   * @return Map[String, Double]
+   */
   def parseIdfModel(json: String) : Map[String, Double] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
@@ -21,6 +31,11 @@ object JSONParser {
     }))
   }
 
+  /**
+   * Parses document text for reader classes.
+   * @param json
+   * @return Map[String, String]
+   */
   def parseDocumentText(json: String) : Map[String, String] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]
@@ -30,6 +45,11 @@ object JSONParser {
     }))
   }
 
+  /**
+   * Parses original article.
+   * @param json
+   * @return Map[String, Any]
+   */
   def parseOriginalArticle(json: String) : Map[String, Any] = {
     val jsonAst = json.parseJson
     val data = jsonAst.convertTo[Map[String, JsValue]]

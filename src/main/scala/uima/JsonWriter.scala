@@ -8,49 +8,108 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.`type`.Lemma
 import departmentsMapping.DepartmentMapping
 import json.{JSONComposer, JSONParser}
 import org.apache.uima.fit.component.JCasConsumer_ImplBase
-import org.apache.uima.fit.descriptor.{ConfigurationParameter, SofaCapability}
+import org.apache.uima.fit.descriptor.SofaCapability
 import org.apache.uima.fit.util.JCasUtil
 import org.apache.uima.jcas.JCas
+import org.mongodb.scala.{Document, MongoClient, MongoCollection}
 
+/**
+ * Combines the contents of the original json document and the outcomes of the analysis (lemmas, reading time,
+ * departments, most relevant lemmas) and writes the new json file into db.
+ */
 @SofaCapability(inputSofas = Array("MOST_RELEVANT_VIEW"))
 class JsonWriter extends JCasConsumer_ImplBase {
 
-  //@ConfigurationParameter(name = JsonWriter.DEPARTMENTS_PATH)
+  /**
+   * Path to file containing department mapping
+   */
   val departmentsPath: String = ConfigFactory.load().getString("app.departmentslocation")
 
-  //@ConfigurationParameter(name = JsonWriter.USER_NAME)
+  /**
+   * Username for target db
+   */
   val userName: String = ConfigFactory.load().getString("app.targetuser")
 
-  //@ConfigurationParameter(name = JsonWriter.PW)
+  /**
+   * Password to target db
+   */
   val pw: String = ConfigFactory.load().getString("app.targetpw")
 
-  //@ConfigurationParameter(name = JsonWriter.SERVER_ADDRESS)
+  /**
+   * Server address of target db
+   */
   val serverAddress: String = ConfigFactory.load().getString("app.targetserver")
 
-  //@ConfigurationParameter(name = JsonWriter.PORT)
+  /**
+   * Port of target db
+   */
   val port: String = ConfigFactory.load().getString("app.targetport")
 
-  //@ConfigurationParameter(name = JsonWriter.DB)
+  /**
+   * Name of target db
+   */
   val db: String = ConfigFactory.load().getString("app.targetdb")
 
-  //@ConfigurationParameter(name = JsonWriter.COLLECTION_NAME)
+  /**
+   * Name of target collection
+   */
   val collectionName: String = ConfigFactory.load().getString("app.targetcollection")
 
-  //für departments:
-  val depKeywordsMapping = DepartmentMapping.deserialize(departmentsPath)
+  /**
+   * Department dictionary
+   */
+  val depKeywordsMapping: Map[String, List[String]] = DepartmentMapping.deserialize(departmentsPath)
 
-  val mongoClient = DbConnector.createClient(userName, pw, serverAddress, port, db)
-  val collection = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
+  /**
+   * The client for MongoDb
+   */
+  val mongoClient: MongoClient = DbConnector.createClient(userName, pw, serverAddress, port, db)
 
+  /**
+   * The target collection to write documents to
+   */
+  val collection: MongoCollection[Document] = DbConnector.getCollectionFromDb(db, collectionName, mongoClient)
+
+  /**
+   * Takes all outcomes of the main pipeline as well as the original article,
+   * creates a new json String containing all information
+   * and writes each document into db.
+   *
+   * @param aJCas
+   */
   override def process(aJCas: JCas): Unit = {
 
-    val lemmas = JCasUtil.select(aJCas, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
-    val readingTime = JCasUtil.select(aJCas, classOf[MetaDataStringField]).toArray.toList.head.asInstanceOf[MetaDataStringField].getValue.toInt
+    // get all lemmas of the document and map them to their value
+    val lemmas = JCasUtil.select(aJCas, classOf[Lemma])
+      .toArray
+      .toList.asInstanceOf[List[Lemma]]
+      .map(lem => lem.getValue)
+
+    // get estimated reading time of the document
+    val readingTime = JCasUtil.select(aJCas, classOf[MetaDataStringField])
+      .toArray
+      .toList
+      .head.asInstanceOf[MetaDataStringField]
+      .getValue
+      .toInt
+
+    // get view containing most relevant lemmas
     val mostRelevantView = aJCas.getView("MOST_RELEVANT_VIEW")
-    val mostRelevantLemmas = JCasUtil.select(mostRelevantView, classOf[Lemma]).toArray.toList.asInstanceOf[List[Lemma]].map(lem => lem.getValue)
+
+    // get most relevant lemmas of the document and map them to their value
+    val mostRelevantLemmas = JCasUtil.select(mostRelevantView, classOf[Lemma])
+      .toArray
+      .toList.asInstanceOf[List[Lemma]]
+      .map(lem => lem.getValue)
+
+    // get original json and parse it
     val originalArticle = aJCas.getView("META_VIEW").getDocumentText
     val data = JSONParser.parseOriginalArticle(originalArticle)
+
+    // departments mapping
     val departments = DepartmentMapping.getDepartmentsForArticle(data("keywords").asInstanceOf[List[String]], depKeywordsMapping)
+
+    // compose new json string
     val jsonString = JSONComposer.compose(
       data("_id").asInstanceOf[String],
       data("authors").asInstanceOf[List[String]],
@@ -71,21 +130,7 @@ class JsonWriter extends JCasConsumer_ImplBase {
       mostRelevantLemmas,
       departments)
 
-    //versuch, event. wieder einkommentieren
-      /*val metaDataStringField = new MetaDataStringField(aJCas, 0, originalArticle.size-1)
-      metaDataStringField.setKey("json")
-      metaDataStringField.setValue(jsonString)
-      metaDataStringField.addToIndexes()*/
+    // write document to db
     DbConnector.writeSingleDocumentToCollection(collection, jsonString)
   }
 }
-
-/*object JsonWriter{
-  final val DEPARTMENTS_PATH = "departmentsPath"
-  final val USER_NAME = "userName"
-  final val PW = "password"
-  final val SERVER_ADDRESS = "serverAddress"
-  final val PORT = "port"
-  final val DB = "database"
-  final val COLLECTION_NAME = "collectionName"
-}*/

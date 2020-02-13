@@ -2,6 +2,9 @@ package json
 
 import spray.json._
 
+/**
+ * Composes final json String.
+ */
 object JSONComposer {
 
   def compose(id: String,
