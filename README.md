@@ -12,6 +12,51 @@ The UIMA pipeline takes the latest scraped articles from the mongoDB, processes 
 * estimated reading time for each article
 * mapping of global newspaper departments for each article (i.e. politics, economics)
 
+### Inputs
+
+```
+{
+    "_id": {"$oid": String},
+    "keywords": Array[String],
+    "published_time": {"$date": {"$numberLong": Long}},
+    "short_url": String,
+    "authors": Array[String],
+    "image_links": Array[String],
+    "links": Array[String],
+    "long_url": String,
+    "crawl_time": {"$date":{"$numberLong": Long}},
+    "intro": String,
+    "description": String,
+    "title": String,
+    "news_site": String,
+    "text": String
+}
+```
+
+### Outputs
+
+```
+{
+    "_id": {"$oid": String},
+    "keywords": Array[String],
+    "publishedTime": {"$date": {"$numberLong": Long}},
+    "shortUrl": String,
+    "authors": Array[String],
+    "imageLinks": Array[String],
+    "links": Array[String],
+    "longUrl": String,
+    "crawlTime": {"$date":{"$numberLong": Long}},
+    "intro": String,
+    "description": String,
+    "title": String,
+    "newsSite": String,
+    "text": String,
+    "departments": Array[String],
+    "lemmas": Array[String],
+    "mostRelevantLemmas: Array[String],
+    "readingTime": Int
+}
+```
 
 ## Architecture of our pipeline
 
@@ -98,8 +143,8 @@ For further interest see for example here: https://www.digitalocean.com/communit
 - Connect to the server via ssh: `ssh inews@hadoop05.f4.htw-berlin.de`
 - Project folder: `~/uima-pipeline`
 
-The code on branch `spark` ist currently running on hadoop05 as cron-job under the userid inews. Currently the code is being executed 4 times per day. Once the whole scraped_articles collection is analyzed this can be changed to only once a day at 1 am as done on news server. 
-Currently the cron-job looks like this: `30 */6 * * * cd uima-pipeline && sbt run >>~/uima.log`.
+The code on branch `spark` ist currently running on hadoop05 as cron-job under the userid inews. Currently the code is being executed 4 times per day. Once the whole scraped_articles collection is analyzed this can be changed to only once a day at 1 am as done on news server.<br>
+Currently the cron-job looks like this: `30 */6 * * * cd uima-pipeline && sbt run >>~/uima.log`.<br>
 To edit type `crontab -e`.
 
 ## Configuring the application
