@@ -12,51 +12,6 @@ The UIMA pipeline takes the latest scraped articles from the mongoDB, processes 
 * estimated reading time for each article
 * mapping of global newspaper departments for each article (i.e. politics, economics)
 
-### Inputs
-
-```
-{
-    "_id": {"$oid": String},
-    "keywords": Array[String],
-    "published_time": {"$date": {"$numberLong": Long}},
-    "short_url": String,
-    "authors": Array[String],
-    "image_links": Array[String],
-    "links": Array[String],
-    "long_url": String,
-    "crawl_time": {"$date":{"$numberLong": Long}},
-    "intro": String,
-    "description": String,
-    "title": String,
-    "news_site": String,
-    "text": String
-}
-```
-
-### Outputs
-
-```
-{
-    "_id": {"$oid": String},
-    "keywords": Array[String],
-    "publishedTime": {"$date": {"$numberLong": Long}},
-    "shortUrl": String,
-    "authors": Array[String],
-    "imageLinks": Array[String],
-    "links": Array[String],
-    "longUrl": String,
-    "crawlTime": {"$date":{"$numberLong": Long}},
-    "intro": String,
-    "description": String,
-    "title": String,
-    "newsSite": String,
-    "text": String,
-    "departments": Array[String],
-    "lemmas": Array[String],
-    "mostRelevantLemmas: Array[String],
-    "readingTime": Int
-}
-```
 
 ## Architecture of our pipeline
 
@@ -106,6 +61,56 @@ The following steps are done for each article separately coming from our mongoDB
 * TfIdfCalculator: now the model created in the first pipeline is used to calculate the final tf-idf weights and find most relevant lemmas
 * JSON Writer: writes newly analysed article with attached departments, most relevant tags etc. to a new collection in the mongoDB
 
+
+### Overview: Input and output to and from our pipeline
+
+Here we provide an overview on how the JSON file looks like that our UIMA pipeline receives from the mongoDB, and after what the newly created JSON file - containing also the departments, the lemmas, most relevant lemmas (used for tagging) and estimated reading time - looks like that we will save back to the mongoDB.
+
+#### Input to the pipeline
+
+```
+{
+    "_id": {"$oid": String},
+    "keywords": Array[String],
+    "published_time": {"$date": {"$numberLong": Long}},
+    "short_url": String,
+    "authors": Array[String],
+    "image_links": Array[String],
+    "links": Array[String],
+    "long_url": String,
+    "crawl_time": {"$date":{"$numberLong": Long}},
+    "intro": String,
+    "description": String,
+    "title": String,
+    "news_site": String,
+    "text": String
+}
+```
+
+#### Output from the pipeline
+
+```
+{
+    "_id": {"$oid": String},
+    "keywords": Array[String],
+    "publishedTime": {"$date": {"$numberLong": Long}},
+    "shortUrl": String,
+    "authors": Array[String],
+    "imageLinks": Array[String],
+    "links": Array[String],
+    "longUrl": String,
+    "crawlTime": {"$date":{"$numberLong": Long}},
+    "intro": String,
+    "description": String,
+    "title": String,
+    "newsSite": String,
+    "text": String,
+    "departments": Array[String],
+    "lemmas": Array[String],
+    "mostRelevantLemmas: Array[String],
+    "readingTime": Int
+}
+```
 
 ## Running the pipeline on the news server
 
